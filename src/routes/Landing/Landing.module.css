@@ -1,0 +1,56 @@
+.page {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 24px;
+  text-align: center;
+  background:
+    radial-gradient(40rem 24rem at 50% 35%, rgba(142, 156, 255, 0.12), transparent 70%),
+    var(--void);
+}
+
+.brand {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(40px, 7vw, 80px);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.title em {
+  color: var(--lantern);
+}
+
+.form {
+  width: min(460px, 100%);
+}
+
+.input {
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line-2);
+  background: var(--deep);
+  color: var(--paper);
+  font: inherit;
+  transition: border-color 0.3s var(--ease);
+}
+
+.input::placeholder {
+  color: var(--paper-3);
+}
+
+.input:hover {
+  border-color: var(--lantern);
+}

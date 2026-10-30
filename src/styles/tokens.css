@@ -1,0 +1,23 @@
+:root {
+  --void: #0b0c10;
+  --deep: #12141a;
+  --raise: #1a1d25;
+  --paper: #ece8e1;
+  --paper-2: #a6a5ad;
+  --paper-3: #6e6f7a;
+  --lantern: #f0b35b;
+  --tide: #8e9cff;
+  --line: rgba(214, 220, 255, 0.08);
+  --line-2: rgba(214, 220, 255, 0.14);
+
+  --font-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --font-body: 'Hanken Grotesk', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+
+  --radius-control: 8px;
+  --radius-card: 14px;
+  --radius-pill: 999px;
+
+  --ease: cubic-bezier(0.22, 0.8, 0.24, 1);
+  color-scheme: dark;
+}
