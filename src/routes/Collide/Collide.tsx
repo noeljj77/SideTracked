@@ -1,71 +1,65 @@
-import { useState, type CSSProperties, type FormEvent } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { useState, type FormEvent } from 'react'
+import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { describeError } from '@/api/wikipedia/errors'
 import { useTopic } from '@/api/wikipedia/queries'
 import type { Bridge } from '@/domain/bridge'
+import { BridgeGraph } from '@/features/collide/BridgeGraph'
 import { Unresolved, useBridge } from '@/features/collide/useBridge'
 import { openTrail } from '@/features/trail/actions'
 import styles from './Collide.module.css'
 
 const CHIPS = 8
 
-function Stone({
-  id,
-  index,
-  ends,
-  onWalk,
-}: {
-  id: string
-  index: number
-  ends: boolean
-  onWalk: () => void
-}) {
+/** The summary of whichever stone you are pointing at. */
+function Detail({ id }: { id: string }) {
   const { data } = useTopic(id)
   return (
-    <li
-      className={`${styles.stone} ${ends ? styles.end : ''}`}
-      style={{ '--i': index } as CSSProperties}
-    >
-      <span className={styles.disc} aria-hidden />
-      <div className={styles.card}>
-        <Link className={styles.name} to={`/explore/${encodeURIComponent(id)}`} onClick={onWalk}>
-          {id}
-        </Link>
-        {data && <p className={styles.summary}>{data.summary}</p>}
-      </div>
+    <div className={styles.detail} aria-live="polite">
       {data?.thumbnail && (
         <img className={styles.thumb} src={data.thumbnail} alt="" loading="lazy" />
       )}
-    </li>
+      <div className={styles.card}>
+        <h2 className={styles.name}>{id}</h2>
+        <p className={styles.summary}>{data ? data.summary : 'Reading…'}</p>
+      </div>
+    </div>
   )
 }
 
 /** The stones between two topics. Remounted for each search, so the picked meeting point starts at the best. */
 function Stones({ bridge }: { bridge: Bridge }) {
   const [pick, setPick] = useState(0)
+  const [active, setActive] = useState<string | null>(null)
   const navigate = useNavigate()
   const middle = bridge.via[pick]
   const path = [bridge.from, ...(middle ?? []), bridge.to]
+  const alternatives = bridge.via
+    .map((stones, index) => ({ index, label: stones[0] ?? '', single: stones.length === 1 }))
+    .filter((a) => a.single && a.index !== pick)
+    .slice(0, CHIPS)
 
   // Walking keeps the stones up to (and including) the one you chose as your trail, so it can be saved.
   const walk = (upTo: number) => openTrail(path.slice(0, upTo + 1))
+  const open = (i: number) => {
+    const id = path[i]
+    if (!id) return
+    walk(i)
+    navigate(`/explore/${encodeURIComponent(id)}`)
+  }
 
   return (
     <>
       <p className={styles.hops}>
         {path.length - 1} {path.length === 2 ? 'hop · they link to each other' : 'hops'}
       </p>
-      <ol className={styles.stones}>
-        {path.map((id, i) => (
-          <Stone
-            key={id}
-            id={id}
-            index={i}
-            ends={i === 0 || i === path.length - 1}
-            onWalk={() => walk(i)}
-          />
-        ))}
-      </ol>
+      <BridgeGraph
+        path={path}
+        alternatives={alternatives}
+        onPick={setPick}
+        onOpen={open}
+        onActive={setActive}
+      />
+      <Detail id={active ?? path[1] ?? path[0] ?? ''} />
       {bridge.via.length > 1 && (
         <div className={styles.others}>
           <p className={styles.hops}>Other meeting points</p>
@@ -85,13 +79,7 @@ function Stones({ bridge }: { bridge: Bridge }) {
           </ul>
         </div>
       )}
-      <button
-        className={styles.go}
-        onClick={() => {
-          walk(path.length - 1)
-          navigate(`/explore/${encodeURIComponent(bridge.to)}`)
-        }}
-      >
+      <button className={styles.go} onClick={() => open(path.length - 1)}>
         Walk this trail
       </button>
     </>
