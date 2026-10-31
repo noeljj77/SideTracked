@@ -5,7 +5,7 @@ test.beforeEach(async ({ page }) => {
   await mockWikipedia(page)
 })
 
-const notes = (page: Page) => page.locator('main a[href^="/explore/"]')
+const notes = (page: Page) => page.locator('main a[data-seed]')
 const titles = (page: Page) => notes(page).locator('strong').allInnerTexts()
 
 test('the landing page pins five topics to start from, each with a line on why', async ({
@@ -47,4 +47,22 @@ test('starting a trail from the search box works', async ({ page }) => {
   await page.getByLabel('Topic').fill('Octopus')
   await page.getByRole('button', { name: 'Start a trail' }).click()
   await expect(page).toHaveURL(/\/explore\/Octopus$/)
+})
+
+test('the landing page offers to pick up the last trail', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.getByText('Pick up where you left off')).toHaveCount(0)
+
+  await page.getByLabel('Topic').fill('Octopus')
+  await page.keyboard.press('Enter')
+  await page.getByRole('link', { name: 'Go to Squid' }).click()
+  await expect(page).toHaveURL(/\/explore\/Squid$/)
+
+  await page.getByRole('link', { name: 'SideTracked' }).click()
+  const resume = page.getByRole('link', { name: /Pick up where you left off/ })
+  await expect(resume).toContainText('Squid')
+  await expect(resume).toContainText('1 hop since Octopus')
+  await resume.click()
+  await expect(page).toHaveURL(/\/explore\/Squid$/)
+  await expect(page.getByRole('navigation', { name: 'Your trail' })).toContainText('Octopus')
 })

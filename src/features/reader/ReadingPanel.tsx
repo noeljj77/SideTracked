@@ -24,7 +24,7 @@ export function ReadingPanel({ id, topic, related, kinds, onSelect }: Props) {
   const setFocus = useUi((s) => s.setFocus)
   const kind = kinds[id]
   return (
-    <aside className={styles.panel} aria-live="polite">
+    <aside className={styles.panel} aria-live="polite" aria-label="About this topic">
       {kind && (
         <span className={styles.kind}>
           <KindGlyph kind={kind} size={12} /> {KIND_LABEL[kind]}
@@ -59,7 +59,7 @@ export function ReadingPanel({ id, topic, related, kinds, onSelect }: Props) {
       {related.data && related.data.length === 0 && (
         <p className={styles.muted}>No connections found for this topic.</p>
       )}
-      <ul className={styles.list}>
+      <ul className={styles.list} id="next-topics" tabIndex={-1} aria-label="Topics to follow next">
         {related.data?.map((n) => (
           <li key={n.id}>
             <button

@@ -14,7 +14,7 @@
   --line: rgba(20, 33, 61, 0.1);
   --line-2: rgba(20, 33, 61, 0.2);
   /* Text on a thread-red surface, and the rgb of drop shadows. */
-  --on-thread: #f5f7fa;
+  --on-thread: #ffffff;
   --shade: 20, 33, 61;
 
   --font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;

@@ -8,6 +8,8 @@ export default defineConfig({
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   // Only the lazily loaded trail map uses this, so without it the dev server finds it late and reloads the page.
   optimizeDeps: { include: ['d3-force'] },
+  // The Firebase SDK is its own chunk, fetched only when accounts are configured, so its size is expected.
+  build: { chunkSizeWarningLimit: 600 },
   test: {
     environment: 'jsdom',
     globals: true,

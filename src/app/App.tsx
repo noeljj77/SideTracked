@@ -8,11 +8,12 @@ import { initAccount } from '@/features/account/account'
 import { CommandBar } from '@/features/search/CommandBar'
 import { TrailsOverlay } from '@/features/trail/TrailsOverlay'
 import { useShortcuts } from '@/hooks/useShortcuts'
-import { Collide } from '@/routes/Collide/Collide'
-import { Explore } from '@/routes/Explore/Explore'
 import { Landing } from '@/routes/Landing/Landing'
 import { useUi } from '@/stores/uiStore'
 
+// The two big pages load when first visited, so the landing page ships without the graph code.
+const Explore = lazy(() => import('@/routes/Explore/Explore').then((m) => ({ default: m.Explore })))
+const Collide = lazy(() => import('@/routes/Collide/Collide').then((m) => ({ default: m.Collide })))
 // The map pulls in the layout engine, so it loads only when opened.
 const TrailMap = lazy(() =>
   import('@/features/graph/TrailMap').then((m) => ({ default: m.TrailMap })),
@@ -35,11 +36,13 @@ function Shell() {
   useEffect(initAccount, [])
   return (
     <>
-      <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path="/explore/:topic" element={<Explore />} />
-        <Route path="/collide" element={<Collide />} />
-      </Routes>
+      <Suspense fallback={null}>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/explore/:topic" element={<Explore />} />
+          <Route path="/collide" element={<Collide />} />
+        </Routes>
+      </Suspense>
       {overlay === 'command' && <CommandBar />}
       {overlay === 'trails' && <TrailsOverlay />}
       {overlay === 'account' && <AccountOverlay />}
