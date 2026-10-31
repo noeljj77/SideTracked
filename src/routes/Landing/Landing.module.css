@@ -54,3 +54,28 @@
 .input:hover {
   border-color: var(--lantern);
 }
+
+.seeds {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  max-width: 520px;
+}
+
+.seed {
+  padding: 5px 12px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-pill);
+  color: var(--paper-2);
+  font-size: 12.5px;
+  text-decoration: none;
+  transition:
+    border-color 0.3s var(--ease),
+    color 0.3s var(--ease);
+}
+
+.seed:hover {
+  border-color: var(--lantern);
+  color: var(--paper);
+}

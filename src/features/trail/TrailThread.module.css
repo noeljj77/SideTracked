@@ -1,0 +1,48 @@
+.thread {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  overflow-x: auto;
+  white-space: nowrap;
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--line-2);
+  border-radius: 14px;
+  font-size: 13px;
+}
+
+.step {
+  display: inline-flex;
+  gap: 8px;
+  color: var(--paper-3);
+}
+.step button {
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--paper-2);
+  font: inherit;
+  cursor: pointer;
+}
+.step button:hover {
+  color: var(--paper);
+}
+
+.now {
+  color: var(--lantern);
+  font-weight: 600;
+}
+
+.depth {
+  margin-left: auto;
+  padding-left: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--paper-3);
+}

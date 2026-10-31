@@ -1,0 +1,129 @@
+.svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glowLantern {
+  stop-color: var(--lantern);
+  stop-opacity: 0.45;
+}
+.glowTide {
+  stop-color: var(--tide);
+  stop-opacity: 0.22;
+}
+.glowEnd {
+  stop-color: var(--void);
+  stop-opacity: 0;
+}
+
+.edge {
+  fill: none;
+  stroke: var(--tide);
+  stroke-opacity: 0.45;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  transition: opacity 0.35s var(--ease);
+  animation: fade 0.8s var(--ease) both;
+}
+.trail {
+  stroke: var(--lantern);
+  stroke-opacity: 0.9;
+  stroke-width: 2.4;
+}
+
+.node {
+  cursor: pointer;
+  outline: none;
+  transition: opacity 0.35s var(--ease);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: bloom 0.6s var(--ease) both;
+}
+.node.current {
+  cursor: default;
+}
+.dim {
+  opacity: 0.25;
+}
+
+.hit {
+  fill: transparent;
+}
+.body {
+  transition: fill 0.35s var(--ease);
+}
+.current .body {
+  fill: var(--lantern);
+}
+.visited .body {
+  fill: var(--paper);
+}
+.ring {
+  fill: none;
+  stroke: var(--lantern);
+  stroke-opacity: 0.6;
+}
+.discoverable .body {
+  fill: var(--deep);
+  stroke: var(--tide);
+  stroke-width: 1.5;
+}
+.discoverable:hover .body,
+.discoverable:focus-visible .body {
+  fill: var(--tide);
+}
+.node:focus-visible .hit {
+  stroke: var(--lantern);
+  stroke-width: 2;
+}
+
+.pulse {
+  fill: var(--lantern);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pulse 3.2s var(--ease) infinite;
+}
+
+.label,
+.labelCurrent {
+  fill: var(--paper);
+  font-family: var(--font-display);
+  font-size: 17px;
+  paint-order: stroke;
+  stroke: var(--void);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+.visited .label {
+  fill: var(--paper-2);
+}
+.labelCurrent {
+  font-size: 24px;
+  font-style: italic;
+}
+
+@keyframes bloom {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.12;
+    transform: scale(1.35);
+  }
+}

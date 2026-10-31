@@ -85,7 +85,7 @@ e2e/              Playwright specs
 - Endpoints:
   - Summary: `https://en.wikipedia.org/api/rest_v1/page/summary/{title}`
   - Search/autocomplete: `https://en.wikipedia.org/w/rest.php/v1/search/title?q=&limit=`
-  - Related topics: Action API `list=search&srsearch=morelike:{title}` plus `prop=links` (namespace 0) — merge and rank in `domain/ranking.ts` into `strong | related | surprising`.
+  - Related topics: Action API `list=search&srsearch=morelike:{title}` (namespace 0), ranked by result order in `domain/ranking.ts` into `strong | related | surprising`. (Merging in `prop=links` is a possible later improvement.)
   - Category glyph: Wikidata `P31` (instance of) via `wbgetentities`, mapped to person/place/idea/event/thing.
 - Normalise titles (spaces ↔ underscores, redirects) in one helper; the topic id is the canonical page title.
 - TanStack Query keys: `['topic', id]`, `['related', id]`, `['search', q]`. `staleTime` ≥ 1 h for summaries. Retry 2× with backoff, not on 4xx.
@@ -123,7 +123,7 @@ npm run test:e2e    # playwright
 ```
 
 - `domain/` logic (ranking, normalisation, trail operations, migrations) needs unit tests.
-- API clients tested against MSW fixtures in `src/test` — **tests never hit live Wikipedia**.
+- API clients and routes are tested with `vi.stubGlobal('fetch', …)` — **tests never hit live Wikipedia**. (MSW is not installed; add it only if stubs get unwieldy.)
 - Components: test behaviour (what the user sees and does), not implementation details.
 - E2E covers: search → open topic → step to neighbour → rewind via trail → reload keeps trail.
 - A milestone is complete only when `lint`, `typecheck`, `test` and `build` all pass.

@@ -1,17 +1,21 @@
 .page {
-  min-height: 100%;
-  padding: 24px;
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background:
+    radial-gradient(50rem 30rem at 35% 50%, rgba(142, 156, 255, 0.1), transparent 70%),
+    var(--void);
 }
 
-.back {
+.brand {
+  position: absolute;
+  top: 18px;
+  left: 18px;
   color: var(--paper-2);
   text-decoration: none;
   font-weight: 600;
+  letter-spacing: -0.01em;
 }
-
-.title {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(32px, 5vw, 56px);
-  color: var(--lantern);
+.brand:hover {
+  color: var(--paper);
 }

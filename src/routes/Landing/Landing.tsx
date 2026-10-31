@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import styles from './Landing.module.css'
+
+const SEEDS = ['Voynich manuscript', 'Tardigrade', 'Brutalist architecture', 'Tunguska event']
 
 export function Landing() {
   const [query, setQuery] = useState('')
@@ -27,6 +29,13 @@ export function Landing() {
           onChange={(e) => setQuery(e.target.value)}
         />
       </form>
+      <div className={styles.seeds}>
+        {SEEDS.map((s) => (
+          <Link key={s} className={styles.seed} to={`/explore/${encodeURIComponent(s)}`}>
+            {s}
+          </Link>
+        ))}
+      </div>
     </main>
   )
 }

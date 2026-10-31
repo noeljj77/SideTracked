@@ -1,0 +1,18 @@
+import { layoutGraph, VIEW } from './layout'
+
+it('pins the current node, keeps every node in bounds, and shows visited steps once', () => {
+  const { nodes, edges } = layoutGraph(
+    'C',
+    ['A', 'B', 'C'],
+    [
+      { id: 'A', strength: 'strong' },
+      { id: 'X', strength: 'strong' },
+      { id: 'Y', strength: 'surprising' },
+    ],
+  )
+  expect(nodes.map((n) => n.id).sort()).toEqual(['A', 'B', 'C', 'X', 'Y'])
+  expect(nodes.find((n) => n.id === 'C')).toMatchObject({ x: VIEW.cx, y: VIEW.cy })
+  expect(nodes.find((n) => n.id === 'A')?.state).toBe('visited')
+  expect(nodes.every((n) => Number.isFinite(n.x) && n.x >= 50 && n.x <= VIEW.w)).toBe(true)
+  expect(edges.filter((e) => e.kind === 'trail')).toHaveLength(2)
+})

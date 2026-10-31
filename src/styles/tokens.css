@@ -7,7 +7,8 @@
   --paper-3: #6e6f7a;
   --lantern: #f0b35b;
   --tide: #8e9cff;
-  --line: rgba(214, 220, 255, 0.08);
+  --glass: rgba(18, 20, 26, 0.82);
+  --line:rgba(214, 220, 255, 0.08);
   --line-2: rgba(214, 220, 255, 0.14);
 
   --font-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
