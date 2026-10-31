@@ -2,6 +2,8 @@
 
 **One thing leads to another.**
 
+**Live demo: https://side-tracked.vercel.app**
+
 SideTracked is an interactive way to explore the internet's knowledge. Start with any topic and follow related topics outward through a living map of ideas. The path you take is saved as a trail you can rewind, revisit and keep.
 
 Topics come from [Wikipedia](https://www.wikipedia.org) and [Wikidata](https://www.wikidata.org), shown in SideTracked's own dark, lamplit interface.
