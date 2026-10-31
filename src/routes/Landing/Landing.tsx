@@ -70,6 +70,7 @@ export function Landing() {
       </div>
       <nav className={styles.nav}>
         <AccountPill />
+        <Pill onClick={() => navigate('/collide')}>Collide</Pill>
         <Pill onClick={() => open('trails')}>Your trails</Pill>
         <Pill onClick={() => void surprise()}>Surprise me</Pill>
       </nav>

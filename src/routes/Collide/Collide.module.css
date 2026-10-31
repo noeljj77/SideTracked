@@ -1,0 +1,287 @@
+.page {
+  min-height: 100%;
+  padding: 24px 24px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background:
+    radial-gradient(40rem 24rem at 50% 0%, rgba(142, 156, 255, 0.12), transparent 70%),
+    var(--void);
+}
+
+.brand {
+  align-self: flex-start;
+  color: var(--paper-2);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+}
+.brand:hover {
+  color: var(--paper);
+}
+
+.title {
+  margin: 56px 0 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(40px, 7vw, 72px);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+.title em {
+  color: var(--lantern);
+}
+
+.lede {
+  margin: 12px 0 28px;
+  color: var(--paper-2);
+  text-align: center;
+}
+
+.form {
+  width: min(680px, 100%);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.input {
+  flex: 1 1 200px;
+  min-width: 0;
+  padding: 12px 18px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line-2);
+  background: var(--deep);
+  color: var(--paper);
+  font: inherit;
+  transition: border-color 0.3s var(--ease);
+}
+.input::placeholder {
+  color: var(--paper-3);
+}
+.input:hover {
+  border-color: var(--lantern);
+}
+
+.vs {
+  color: var(--tide);
+  font-family: var(--font-display);
+  font-size: 26px;
+}
+
+.go {
+  padding: 12px 22px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--lantern);
+  color: var(--void);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.3s var(--ease),
+    opacity 0.3s var(--ease);
+}
+.go:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+.go:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.result {
+  width: min(680px, 100%);
+  margin-top: 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.status {
+  margin: 0;
+  align-self: center;
+  color: var(--paper-2);
+  text-align: center;
+}
+.status em {
+  color: var(--paper-3);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-style: normal;
+  margin-left: 6px;
+}
+
+.dots {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 10px;
+  border-radius: 50%;
+  background: var(--lantern);
+  animation: breathe 1.6s var(--ease) infinite;
+}
+
+.hops {
+  margin: 0 0 20px;
+  color: var(--paper-3);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.stones {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  width: 100%;
+}
+
+/* Each stone rises in a beat after the one before it, and the thread to the next one draws itself. */
+.stone {
+  position: relative;
+  display: flex;
+  gap: 14px;
+  padding: 0 0 30px 44px;
+  animation: rise 0.55s var(--ease) both;
+  animation-delay: calc(var(--i) * 0.22s);
+}
+.stone::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 24px;
+  bottom: 0;
+  width: 2px;
+  background: var(--lantern);
+  opacity: 0.75;
+  transform-origin: top;
+  animation: draw 0.45s var(--ease) both;
+  animation-delay: calc(var(--i) * 0.22s + 0.2s);
+}
+.stone:last-child {
+  padding-bottom: 8px;
+}
+.stone:last-child::before {
+  display: none;
+}
+
+.disc {
+  position: absolute;
+  left: 3px;
+  top: 9px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--paper);
+  box-shadow: 0 0 0 4px rgba(240, 179, 91, 0.25);
+}
+.end .disc {
+  background: var(--lantern);
+  box-shadow: 0 0 20px rgba(240, 179, 91, 0.55);
+}
+
+.card {
+  flex: 1;
+  min-width: 0;
+}
+.name {
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: 26px;
+  line-height: 1.15;
+  text-decoration: none;
+}
+.name:hover {
+  color: var(--lantern);
+}
+.summary {
+  margin: 4px 0 0;
+  color: var(--paper-2);
+  font-size: 13.5px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.thumb {
+  width: 56px;
+  height: 56px;
+  flex: none;
+  border-radius: var(--radius-control);
+  object-fit: cover;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+@keyframes draw {
+  from {
+    transform: scaleY(0);
+  }
+}
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.6);
+  }
+}
+
+.others {
+  width: 100%;
+  margin: 4px 0 20px;
+}
+.others .hops {
+  margin-bottom: 10px;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.chip {
+  padding: 5px 12px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--paper-2);
+  font: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition:
+    border-color 0.3s var(--ease),
+    color 0.3s var(--ease),
+    background 0.3s var(--ease);
+}
+.chip:hover {
+  border-color: var(--lantern);
+  color: var(--paper);
+}
+.chip[aria-pressed='true'] {
+  border-color: var(--lantern);
+  background: rgba(240, 179, 91, 0.12);
+  color: var(--paper);
+}
+
+/* When the two fields stack, the × has no side to sit between. */
+@media (max-width: 599px) {
+  .vs {
+    display: none;
+  }
+}

@@ -57,6 +57,74 @@ export async function fetchRelated(id: string, signal?: AbortSignal): Promise<Ne
   )
 }
 
+const linksSchema = z.object({
+  continue: z.record(z.string(), z.string()).optional(),
+  query: z
+    .object({
+      pages: z.array(z.object({ title: z.string(), links: z.array(z.object({ title: z.string() })).optional() })),
+    })
+    .optional(),
+})
+
+const linksUrl = (params: Record<string, string>) =>
+  `${ACTION}?${new URLSearchParams({ action: 'query', format: 'json', formatversion: '2', origin: '*', ...params })}`
+
+const LINK_PAGES = 8 // 500 links per request: enough for the biggest articles
+const BATCH = 50 // titles per request, the API's limit
+const PARALLEL = 4 // polite to Wikipedia, and still quick
+
+/** Every article this one links to (main namespace), following continuation. */
+export async function fetchLinks(id: string, signal?: AbortSignal): Promise<string[]> {
+  const out: string[] = []
+  let more: Record<string, string> = {}
+  for (let i = 0; i < LINK_PAGES; i++) {
+    const data = parse(
+      linksSchema,
+      await getJson(
+        linksUrl({ prop: 'links', titles: id, pllimit: 'max', plnamespace: '0', redirects: '1', ...more }),
+        signal,
+      ),
+    )
+    for (const page of data.query?.pages ?? []) out.push(...(page.links ?? []).map((l) => l.title))
+    if (!data.continue) break
+    more = data.continue
+  }
+  return out
+}
+
+/**
+ * Which of `titles` link to `target`, in the order given. One request checks 50 articles, so even
+ * a long list is a handful of calls. `onProgress` reports how many have been checked.
+ */
+export async function fetchLinkers(
+  titles: string[],
+  target: string,
+  signal?: AbortSignal,
+  onProgress?: (checked: number) => void,
+): Promise<string[]> {
+  const batches: string[][] = []
+  for (let i = 0; i < titles.length; i += BATCH) batches.push(titles.slice(i, i + BATCH))
+  const hits = new Set<string>()
+  let next = 0
+  let checked = 0
+  const worker = async () => {
+    for (let batch = batches[next++]; batch; batch = batches[next++]) {
+      const data = parse(
+        linksSchema,
+        await getJson(
+          linksUrl({ prop: 'links', titles: batch.join('|'), pltitles: target, pllimit: 'max' }),
+          signal,
+        ),
+      )
+      for (const page of data.query?.pages ?? []) if (page.links?.length) hits.add(page.title)
+      checked += batch.length
+      onProgress?.(checked)
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(PARALLEL, batches.length) }, worker))
+  return titles.filter((t) => hits.has(t))
+}
+
 export type TitleHit = { title: string; description?: string }
 
 export async function searchTitles(q: string, signal?: AbortSignal): Promise<TitleHit[]> {

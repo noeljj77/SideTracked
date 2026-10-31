@@ -8,6 +8,7 @@ import { initAccount } from '@/features/account/account'
 import { CommandBar } from '@/features/search/CommandBar'
 import { TrailsOverlay } from '@/features/trail/TrailsOverlay'
 import { useShortcuts } from '@/hooks/useShortcuts'
+import { Collide } from '@/routes/Collide/Collide'
 import { Explore } from '@/routes/Explore/Explore'
 import { Landing } from '@/routes/Landing/Landing'
 import { useUi } from '@/stores/uiStore'
@@ -32,6 +33,7 @@ function Shell() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/explore/:topic" element={<Explore />} />
+        <Route path="/collide" element={<Collide />} />
       </Routes>
       {overlay === 'command' && <CommandBar />}
       {overlay === 'trails' && <TrailsOverlay />}

@@ -76,6 +76,16 @@ export async function mockWikipedia(page: Page) {
       return route.fulfill(json({ query: { pages } }))
     }
 
+    // Outgoing links, optionally only those pointing at `pltitles` (formatversion 2 shape).
+    if (url.pathname.endsWith('/api.php') && url.searchParams.get('prop') === 'links') {
+      const only = url.searchParams.get('pltitles')
+      const pages = (url.searchParams.get('titles') ?? '').split('|').map((title) => {
+        const links = (LINKS[title] ?? []).filter((t) => !only || t === only).map((t) => ({ title: t }))
+        return links.length ? { title, links } : { title }
+      })
+      return route.fulfill(json({ query: { pages } }))
+    }
+
     if (url.pathname.endsWith('/api.php')) {
       const topic = (url.searchParams.get('srsearch') ?? '').replace('morelike:', '')
       const search = (LINKS[topic] ?? []).map((title) => ({ title }))

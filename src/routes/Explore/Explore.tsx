@@ -54,6 +54,7 @@ export function Explore() {
           Search <kbd>Ctrl K</kbd>
         </Pill>
         <Pill onClick={() => open('trails')}>Trails</Pill>
+        <Pill onClick={() => navigate(`/collide?from=${encodeURIComponent(id)}`)}>Collide</Pill>
         <AccountPill />
       </div>
       <ReadingPanel id={id} topic={topic} related={related} kinds={kinds} onSelect={go} />
