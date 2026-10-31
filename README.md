@@ -11,7 +11,7 @@ Topics come from [Wikipedia](https://www.wikipedia.org) and [Wikidata](https://w
 ## What it does
 
 - **Explore as a graph.** The current topic glows amber at the centre. Related topics fan out around it, ranked strong, related or surprising. Click one to take a step.
-- **Keep your trail.** Every step is recorded along the bottom. Click an earlier step to rewind, or use the browser's back button. Trails are saved in your browser.
+- **Keep your trail.** Every step is recorded along the bottom. Click an earlier step to rewind, or use the browser's back button. Trails are saved in your browser, and sync across devices if you sign in with Google.
 - **Jump anywhere.** Press `Ctrl K` (or `/`) to search any topic, pick "Surprise me" for a random article, or open your saved trails.
 - **See what kind of thing it is.** Small icons mark each topic as a person, place, event, idea or thing.
 - **Read without leaving.** A side panel shows the summary and links to the full Wikipedia article.
@@ -28,6 +28,18 @@ npm run dev
 
 Then open the address Vite prints (usually http://localhost:5173).
 
+## Accounts (optional)
+
+SideTracked works without an account: trails are kept in your browser. If you set up Firebase, a "Sign in" button appears and saved trails sync across your devices.
+
+1. Create a project at [console.firebase.google.com](https://console.firebase.google.com).
+2. **Build → Authentication → Sign-in method:** enable **Google**.
+3. **Build → Firestore Database:** create a database, then paste the contents of [`firestore.rules`](firestore.rules) into the **Rules** tab and publish.
+4. **Project settings → Your apps:** add a Web app, then copy its config into a new `.env.local` (see [`.env.example`](.env.example)).
+5. **Authentication → Settings → Authorized domains:** add your deployed domain (`localhost` is already allowed).
+
+For a hosted site, add the same four `VITE_FIREBASE_*` values as environment variables in your host's settings and redeploy.
+
 ## Scripts
 
 | Command | What it does |
@@ -43,7 +55,7 @@ The e2e tests use a fake Wikipedia, so no tests touch the live site. On a machin
 
 ## Built with
 
-Vite, React 18 and strict TypeScript. React Router for pages, TanStack Query for data, Zustand for saved trails, d3-force and SVG for the graph, and zod to validate every API response. Styling is plain CSS Modules on a small set of design tokens. Tests use Vitest, Testing Library and Playwright.
+Vite, React 18 and strict TypeScript. React Router for pages, TanStack Query for data, Zustand for saved trails, Firebase (Google sign-in and Firestore) for optional accounts, d3-force and SVG for the graph, and zod to validate every API response. Styling is plain CSS Modules on a small set of design tokens. Tests use Vitest, Testing Library and Playwright.
 
 ## Project layout
 

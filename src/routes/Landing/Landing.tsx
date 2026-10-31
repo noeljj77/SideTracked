@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { fetchRandomTitle } from '@/api/wikipedia/client'
 import { Pill } from '@/components/Pill'
+import { AccountPill } from '@/features/account/AccountPill'
 import { startFresh } from '@/features/trail/actions'
 import { useUi } from '@/stores/uiStore'
 import styles from './Landing.module.css'
@@ -38,6 +39,7 @@ export function Landing() {
   return (
     <main className={styles.page}>
       <nav className={styles.nav}>
+        <AccountPill />
         <Pill onClick={() => open('trails')}>Your trails</Pill>
         <Pill onClick={() => void surprise()}>Surprise me</Pill>
       </nav>

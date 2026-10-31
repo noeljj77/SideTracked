@@ -2,6 +2,7 @@ import { useCallback, useEffect } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useKinds } from '@/api/wikidata/queries'
 import { useRelated, useTopic } from '@/api/wikipedia/queries'
+import { AccountPill } from '@/features/account/AccountPill'
 import { GraphCanvas } from '@/features/graph/GraphCanvas'
 import { ReadingPanel } from '@/features/reader/ReadingPanel'
 import { TrailThread } from '@/features/trail/TrailThread'
@@ -53,6 +54,7 @@ export function Explore() {
           Search <kbd>Ctrl K</kbd>
         </Pill>
         <Pill onClick={() => open('trails')}>Trails</Pill>
+        <AccountPill />
       </div>
       <ReadingPanel id={id} topic={topic} related={related} kinds={kinds} onSelect={go} />
       <TrailThread

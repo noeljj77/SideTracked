@@ -32,7 +32,8 @@ Concept: *reading by lamplight in a very large library.* Dark, quiet surrounding
 - **Vite + React 18 + TypeScript** (strict), npm.
 - **React Router** — routes `/` and `/explore/:topic`. Browser back = step back along the trail.
 - **TanStack Query** — all remote data fetching and caching.
-- **Zustand** (+ `persist` middleware) — client state; trails saved to `localStorage`. No accounts or backend yet.
+- **Zustand** (+ `persist` middleware) — client state; trails saved to `localStorage`.
+- **Firebase** (Auth with Google + Firestore) for optional accounts, loaded lazily with `import()` from `src/api/firebase/firebase.ts` only. Saved trails sync to `users/{uid}/trails/{id}`; rules live in `firestore.rules`. The app must keep working with no Firebase config (the sign-in button hides) and when signed out.
 - **d3-force** for layout, rendered with **SVG** in React (switch to Canvas only if profiling demands it, >300 visible nodes).
 - **Motion** (`motion/react`) for UI and node transitions.
 - **CSS Modules** + global token file. No Tailwind, no component library.
@@ -100,6 +101,15 @@ e2e/              Playwright specs
 - Node state is derived from the trail, not stored twice.
 - Cap the visible graph (current + neighbours + one distant ring); prune old nodes but keep them in the trail.
 - Persisted state is versioned (`version` + `migrate` in `persist`). Never break existing saved trails without a migration.
+
+## Accounts and sync
+
+- Config comes from `VITE_FIREBASE_*` in `.env.local` (gitignored; template in `.env.example`) and in Vercel's project settings. These identify the project and are not secrets; **security comes from `firestore.rules`**. Never commit service-account keys or admin credentials.
+- Only `src/api/firebase/firebase.ts` imports the Firebase SDK. Everything else goes through `features/account/account.ts` and the `TrailsRepo` type in `domain/trails.ts`, so tests use a fake repo and never touch Firebase.
+- `features/account/sync.ts` merges this device's trails into the account on first sign-in, then treats the account as the truth. It pushes local saves and deletes, and uses a `known` map to avoid echo writes. Keep its unit tests passing when changing it.
+- Signing out keeps trails on the device. Validate every Firestore document with zod before use.
+- Changing `firestore.rules` is a deployment step: it is pasted into Firebase console (Firestore → Rules) or deployed with the Firebase CLI; pushing to git does not update it.
+- `npm audit` flags `@grpc/grpc-js` via `firebase`. That is the Node server transport, not used by the browser SDK. Do not run `npm audit fix --force` (it downgrades Firebase to 2022).
 
 ## Error handling
 

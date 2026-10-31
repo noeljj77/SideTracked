@@ -1,0 +1,12 @@
+.name {
+  max-width: 9ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 520px) {
+  .name {
+    display: none;
+  }
+}

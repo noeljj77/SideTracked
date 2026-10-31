@@ -12,8 +12,9 @@
   top: 12px;
   left: 18px;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: 8px 12px;
 }
 
 .brand {
@@ -32,4 +33,11 @@
 }
 .page[data-idle='true'] > :not(svg):not(:hover):not(:focus-within) {
   opacity: 0.25;
+}
+
+/* On narrow screens the bar may wrap, so give it a right edge to wrap against. */
+@media (max-width: 599px) {
+  .bar {
+    right: 18px;
+  }
 }

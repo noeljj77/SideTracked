@@ -1,9 +1,8 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { MAX_SAVED, stepsKey, type SavedTrail } from '@/domain/trails'
 
-export type SavedTrail = { id: string; steps: string[]; savedAt: number }
-
-const MAX_SAVED = 30
+export type { SavedTrail }
 
 type SavedState = {
   trails: SavedTrail[]
@@ -18,7 +17,7 @@ export const useSavedTrails = create<SavedState>()(
       trails: [],
       save: (steps) =>
         set((s) => {
-          const dup = s.trails.some((t) => t.steps.join('\n') === steps.join('\n'))
+          const dup = s.trails.some((t) => stepsKey(t.steps) === stepsKey(steps))
           if (steps.length < 2 || dup) return s
           const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
           return { trails: [{ id, steps: [...steps], savedAt: Date.now() }, ...s.trails].slice(0, MAX_SAVED) }
