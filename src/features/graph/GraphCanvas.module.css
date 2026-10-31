@@ -181,27 +181,6 @@
 .live .edge {
   transition: opacity 0.35s var(--ease);
 }
-.resetView {
-  display: none;
-  position: absolute;
-  left: 24px;
-  bottom: 96px;
-  padding: 6px 14px;
-  border: 1px solid var(--line-2);
-  border-radius: var(--radius-pill);
-  background: var(--deep);
-  color: var(--paper-2);
-  font: inherit;
-  font-size: 12.5px;
-  cursor: pointer;
-  transition:
-    border-color 0.3s var(--ease),
-    color 0.3s var(--ease);
-}
-.resetView:hover {
-  border-color: var(--lantern);
-  color: var(--paper);
-}
 
 /* Lamplight: a warm pool of light under the cursor. */
 .light {
@@ -241,9 +220,6 @@
   }
 }
 
-.svg[data-moved] ~ .resetView {
-  display: block;
-}
 
 /* The journey is one big world: old steps fade a little, and faint stars mark the empty space. */
 .visited {
@@ -257,10 +233,27 @@
   opacity: 0.28;
   pointer-events: none;
 }
-.journey {
+
+.labelHit {
+  fill: transparent;
+}
+
+/* Bottom left: the view buttons above the minimap. Reset only appears once you have moved the camera. */
+.dock {
   position: absolute;
   left: 24px;
   bottom: 96px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+.dockButtons {
+  display: flex;
+  gap: 8px;
+}
+.journey,
+.resetView {
   padding: 6px 14px;
   border: 1px solid var(--line-2);
   border-radius: var(--radius-pill);
@@ -273,21 +266,25 @@
     border-color 0.3s var(--ease),
     color 0.3s var(--ease);
 }
-.journey:hover {
+.journey:hover,
+.resetView:hover {
   border-color: var(--lantern);
   color: var(--paper);
 }
 .resetView {
-  left: 150px;
+  display: none;
+}
+.svg[data-moved] ~ .dock .resetView {
+  display: block;
 }
 @media (max-width: 899px) {
-  .journey,
-  .resetView {
+  .dock {
     bottom: auto;
     top: 64px;
   }
 }
 
-.labelHit {
-  fill: transparent;
+/* A topic the reading panel is pointing at fills in like a hovered one. */
+.discoverable.lit .body {
+  fill: var(--tide);
 }

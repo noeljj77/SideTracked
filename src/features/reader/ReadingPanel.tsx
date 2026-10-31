@@ -3,9 +3,14 @@ import { describeError } from '@/api/wikipedia/errors'
 import { KIND_LABEL, KindGlyph } from '@/components/KindGlyph'
 import type { Kind } from '@/domain/kind'
 import type { Neighbor, Topic, Why } from '@/domain/types'
+import { useUi } from '@/stores/uiStore'
 import styles from './ReadingPanel.module.css'
 
-const WHY: Record<Why, string> = { both: 'closely linked', similar: 'similar', tangent: 'tangent' }
+const WHY: Record<Why, string> = {
+  both: 'Links both ways',
+  similar: 'Similar article',
+  tangent: 'A tangent',
+}
 
 type Props = {
   id: string
@@ -16,6 +21,7 @@ type Props = {
 }
 
 export function ReadingPanel({ id, topic, related, kinds, onSelect }: Props) {
+  const setFocus = useUi((s) => s.setFocus)
   const kind = kinds[id]
   return (
     <aside className={styles.panel} aria-live="polite">
@@ -56,12 +62,25 @@ export function ReadingPanel({ id, topic, related, kinds, onSelect }: Props) {
       <ul className={styles.list}>
         {related.data?.map((n) => (
           <li key={n.id}>
-            <button className={styles.row} onClick={() => onSelect(n.id)}>
+            <button
+              className={styles.row}
+              onClick={() => {
+                setFocus(null) // the row is about to go away, so it will never get a blur
+                onSelect(n.id)
+              }}
+              onMouseEnter={() => setFocus(n.id)}
+              onMouseLeave={() => setFocus(null)}
+              onFocus={() => setFocus(n.id)}
+              onBlur={() => setFocus(null)}
+            >
               <span className={styles.name}>
                 {kinds[n.id] && <KindGlyph kind={kinds[n.id]!} size={12} />}
                 {n.id}
               </span>
-              <em>{WHY[n.why]}</em>
+              <span className={styles.why}>
+                <i className={styles[n.why]} aria-hidden />
+                {WHY[n.why]}
+              </span>
             </button>
           </li>
         ))}

@@ -153,3 +153,28 @@ test('a long journey stays on the map instead of dropping the early steps', asyn
   await expect(page.getByRole('link', { name: 'Go to Nautilus' })).toBeAttached()
   await expect(page.getByRole('button', { name: 'Whole journey' })).toBeVisible()
 })
+
+test('pointing at a topic in the reading panel lights it up on the graph', async ({ page }) => {
+  await page.goto('/explore/Octopus')
+  const squid = page.getByRole('link', { name: 'Go to Squid' })
+  const ink = page.getByRole('link', { name: 'Go to Ink' })
+  await expect(squid).toBeVisible()
+  await expect(ink).toHaveCSS('opacity', '1')
+  await page.getByRole('button', { name: /^Squid/ }).hover()
+  await expect(ink).toHaveCSS('opacity', '0.25')
+  await expect(squid).toHaveCSS('opacity', '1')
+})
+
+test('after a few steps a minimap appears, and clicking it moves the camera', async ({ page }) => {
+  await page.goto('/explore/Octopus')
+  for (const next of ['Nautilus', 'Ammonite']) {
+    await page.getByRole('link', { name: `Go to ${next}` }).click()
+    await expect(page).toHaveURL(new RegExp(`/explore/${next}$`))
+  }
+  const graph = page.getByRole('group', { name: 'Topics connected to Ammonite' })
+  const mini = page.locator('svg[aria-hidden="true"][width="188"]')
+  await expect(mini).toBeVisible()
+  await expect(graph).not.toHaveAttribute('data-moved')
+  await mini.click({ position: { x: 20, y: 54 } })
+  await expect(graph).toHaveAttribute('data-moved', '')
+})

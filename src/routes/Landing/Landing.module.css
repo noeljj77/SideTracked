@@ -130,3 +130,10 @@
   font-size: 13px;
   color: var(--paper-3);
 }
+
+/* On a phone there are no margins to keep clear: the words would sit behind the search. */
+@media (max-width: 700px) {
+  .words {
+    display: none;
+  }
+}

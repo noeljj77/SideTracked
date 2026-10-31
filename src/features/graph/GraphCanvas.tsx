@@ -16,6 +16,7 @@ import { useUi } from '@/stores/uiStore'
 import { useWorld } from '@/stores/worldStore'
 import { fitAll, layoutGraph, VIEWS, type GraphEdge, type GraphNode } from './layout'
 import { Peek, type PeekAnchor } from './Peek'
+import { Minimap } from './Minimap'
 import { usePanZoom } from './usePanZoom'
 import styles from './GraphCanvas.module.css'
 
@@ -134,7 +135,7 @@ export const GraphCanvas = memo(function GraphCanvas({
   const svg = useRef<SVGSVGElement>(null)
   const layer = useRef<SVGGElement>(null)
   const light = useRef<HTMLDivElement>(null)
-  const { reset, goTo, scale } = usePanZoom(svg, layer, current, layout.home)
+  const { reset, goTo, scale, watch, camera } = usePanZoom(svg, layer, current, layout.home)
   const [hover, setHover] = useState<string | null>(null)
   const [peek, setPeek] = useState<PeekAnchor | null>(null)
   const peekTimer = useRef<number>(undefined)
@@ -295,19 +296,24 @@ export const GraphCanvas = memo(function GraphCanvas({
     window.clearTimeout(peekTimer.current)
   }
 
+  // With fewer than three steps there is nothing to overview yet.
+  const journey = nodes.filter((n) => n.state !== 'discoverable').length >= 3
   const byId = useMemo(() => new Map(nodes.map((n) => [n.id, n])), [nodes])
+  // Pointing at a topic in the reading panel lights it up here just like hovering it does.
+  const panelFocus = useUi((s) => s.focusId)
+  const lit = hover ?? (panelFocus && nodes.some((n) => n.id === panelFocus) ? panelFocus : null)
   const near = useMemo(() => {
     const s = new Set<string>()
-    if (hover) {
-      s.add(hover)
+    if (lit) {
+      s.add(lit)
       edges.forEach((e) => {
-        if (e.source === hover) s.add(e.target)
-        if (e.target === hover) s.add(e.source)
+        if (e.source === lit) s.add(e.target)
+        if (e.target === lit) s.add(e.source)
       })
     }
     return s
-  }, [hover, edges])
-  const dim = (id: string) => (hover && !near.has(id) ? styles.dim : '')
+  }, [lit, edges])
+  const dim = (id: string) => (lit && !near.has(id) ? styles.dim : '')
 
   return (
     <>
@@ -367,7 +373,7 @@ export const GraphCanvas = memo(function GraphCanvas({
             const a = byId.get(e.source)
             const b = byId.get(e.target)
             if (!a || !b) return null
-            const active = !hover || e.source === hover || e.target === hover
+            const active = !lit || e.source === lit || e.target === lit
             const [oa, ob] = [offset(a.id), offset(b.id)]
             const d = curve({ x: a.x + oa.x, y: a.y + oa.y }, { x: b.x + ob.x, y: b.y + ob.y })
             return (
@@ -421,7 +427,7 @@ export const GraphCanvas = memo(function GraphCanvas({
                     '--fade': Math.max(0.4, 1 - n.age * 0.05),
                   } as CSSProperties
                 }
-                className={`${styles.place} ${styles[n.state]} ${dim(n.id)}`}
+                className={`${styles.place} ${styles[n.state]} ${dim(n.id)} ${lit === n.id ? styles.lit : ''}`}
                 role={isCurrent ? undefined : 'link'}
                 tabIndex={isCurrent ? undefined : 0}
                 aria-label={isCurrent ? undefined : `Go to ${n.id}`}
@@ -450,14 +456,38 @@ export const GraphCanvas = memo(function GraphCanvas({
           })}
         </g>
       </svg>
-      {nodes.length > 2 && (
-        <button type="button" className={styles.journey} onClick={() => goTo(fitAll(view, nodes))}>
-          Whole journey
-        </button>
-      )}
-      <button type="button" className={styles.resetView} onClick={reset}>
-        Reset view
-      </button>
+      <div className={styles.dock}>
+        <div className={styles.dockButtons}>
+          {journey && (
+            <button
+              type="button"
+              className={styles.journey}
+              onClick={() => goTo(fitAll(view, nodes))}
+            >
+              Whole journey
+            </button>
+          )}
+          <button type="button" className={styles.resetView} onClick={reset}>
+            Reset view
+          </button>
+        </div>
+        {journey && (
+          <Minimap
+            nodes={nodes}
+            edges={edges}
+            view={view}
+            home={layout.home}
+            camera={camera}
+            watch={watch}
+            onJump={(p, smooth) => {
+              // Put the chosen spot in the middle of the part of the screen the panel leaves free.
+              const k = scale()
+              const { left, right, top, bottom } = view.room
+              goTo({ k, x: (left + right) / 2 - p.x * k, y: (top + bottom) / 2 - p.y * k }, smooth)
+            }}
+          />
+        )}
+      </div>
       {peek && <Peek anchor={peek} />}
     </>
   )

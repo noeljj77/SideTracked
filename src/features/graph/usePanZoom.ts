@@ -31,10 +31,19 @@ export function usePanZoom(
   const rest = useRef<Transform>(home)
   const settled = useRef(false)
   const place = useRef<(next: Transform, smooth?: boolean) => void>(() => {})
+  const listeners = useRef(new Set<(t: Transform, smooth: boolean) => void>())
+
+  /** Hear about every camera move (the minimap draws its viewport from this). Returns the way to stop. */
+  const watch = useCallback((fn: (t: Transform, smooth: boolean) => void) => {
+    const all = listeners.current
+    all.add(fn)
+    return () => void all.delete(fn)
+  }, [])
+  const camera = useCallback(() => t.current, [])
 
   const reset = useCallback(() => place.current(rest.current, true), [])
   /** Glide to any view, e.g. one that shows the whole journey. */
-  const goTo = useCallback((to: Transform) => place.current(to, true), [])
+  const goTo = useCallback((to: Transform, smooth = true) => place.current(to, smooth), [])
   useEffect(() => {
     rest.current = home
     place.current(home, settled.current)
@@ -54,6 +63,7 @@ export function usePanZoom(
       const atRest = next.k === r.k && next.x === r.x && next.y === r.y
       if (atRest) delete el.dataset.moved
       else el.dataset.moved = ''
+      listeners.current.forEach((fn) => fn(next, smooth))
     }
     place.current = apply
     apply(rest.current) // the first placement, before any glide
@@ -114,5 +124,5 @@ export function usePanZoom(
 
   /** Zoom factor now in effect, for turning screen pixels into svg units. */
   const scale = useCallback(() => t.current.k, [])
-  return { reset, goTo, scale }
+  return { reset, goTo, scale, watch, camera }
 }

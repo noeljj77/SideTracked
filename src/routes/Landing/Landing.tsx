@@ -12,7 +12,7 @@ const SEEDS = ['Voynich manuscript', 'Tardigrade', 'Brutalist architecture', 'Tu
 // Decoration only: faint until the cursor's lamplight passes over them. Kept distinct from SEEDS.
 const DRIFT = [
   'Byzantium', 'Octopus', 'Jazz', 'Silk Road', 'Aurora', 'Kintsugi', 'Mycelium', 'Antikythera',
-  'Lighthouse', 'Bioluminescence', 'Origami', 'Cartography', 'Obsidian', 'Monsoon', 'Alchemy', 'Sundial',
+  'Lighthouse', 'Glacier', 'Origami', 'Cartography', 'Obsidian', 'Monsoon', 'Alchemy', 'Sundial',
 ]
 
 export function Landing() {
@@ -57,9 +57,12 @@ export function Landing() {
           <span
             key={w}
             style={{
-              left: `${(i * 37) % 88 + 4}%`,
-              top: `${(i * 53) % 84 + 6}%`,
-              fontSize: 20 + (i % 3) * 7,
+              // Even words hug the left edge, odd ones the right, each on its own row: never behind the content.
+              ...(i % 2
+                ? { right: `${2 + (Math.floor(i / 2) % 3) * 3}%` }
+                : { left: `${2 + (Math.floor(i / 2) % 3) * 3}%` }),
+              top: `${13 + Math.floor(i / 2) * 10}%`,
+              fontSize: 18 + (i % 3) * 3,
               animationDuration: `${16 + (i % 5) * 4}s`,
               animationDelay: `${-i * 2.3}s`,
             }}
