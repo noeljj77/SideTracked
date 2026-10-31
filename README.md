@@ -11,6 +11,7 @@ Topics come from [Wikipedia](https://www.wikipedia.org) and [Wikidata](https://w
 ## What it does
 
 - **Explore as a graph.** The current topic glows amber at the centre. Related topics fan out around it, ranked strong, related or surprising. Click one to take a step.
+- **Peek before you step.** Hover a topic to see its thumbnail and first lines. Arrow keys move between topics and `Enter` steps into one. The ones you leave behind drift toward the one you chose.
 - **Keep your trail.** Every step is recorded along the bottom. Click an earlier step to rewind, or use the browser's back button. Trails are saved in your browser, and sync across devices if you sign in with Google.
 - **Jump anywhere.** Press `Ctrl K` (or `/`) to search any topic, pick "Surprise me" for a random article, or open your saved trails.
 - **See what kind of thing it is.** Small icons mark each topic as a person, place, event, idea or thing.

@@ -9,6 +9,12 @@ import styles from './Landing.module.css'
 
 const SEEDS = ['Voynich manuscript', 'Tardigrade', 'Brutalist architecture', 'Tunguska event']
 
+// Decoration only: faint until the cursor's lamplight passes over them. Kept distinct from SEEDS.
+const DRIFT = [
+  'Byzantium', 'Octopus', 'Jazz', 'Silk Road', 'Aurora', 'Kintsugi', 'Mycelium', 'Antikythera',
+  'Lighthouse', 'Bioluminescence', 'Origami', 'Cartography', 'Obsidian', 'Monsoon', 'Alchemy', 'Sundial',
+]
+
 export function Landing() {
   const [query, setQuery] = useState('')
   const [failed, setFailed] = useState(false)
@@ -37,7 +43,31 @@ export function Landing() {
   }
 
   return (
-    <main className={styles.page}>
+    <main
+      className={styles.page}
+      // The lamplight follows the pointer through two CSS variables, so moving it never re-renders React.
+      onPointerMove={(e) => {
+        const r = e.currentTarget.getBoundingClientRect()
+        e.currentTarget.style.setProperty('--mx', `${e.clientX - r.left}px`)
+        e.currentTarget.style.setProperty('--my', `${e.clientY - r.top}px`)
+      }}
+    >
+      <div className={styles.words} aria-hidden>
+        {DRIFT.map((w, i) => (
+          <span
+            key={w}
+            style={{
+              left: `${(i * 37) % 88 + 4}%`,
+              top: `${(i * 53) % 84 + 6}%`,
+              fontSize: 20 + (i % 3) * 7,
+              animationDuration: `${16 + (i % 5) * 4}s`,
+              animationDelay: `${-i * 2.3}s`,
+            }}
+          >
+            {w}
+          </span>
+        ))}
+      </div>
       <nav className={styles.nav}>
         <AccountPill />
         <Pill onClick={() => open('trails')}>Your trails</Pill>

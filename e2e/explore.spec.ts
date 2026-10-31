@@ -63,3 +63,26 @@ test('topics are labelled with their kind', async ({ page }) => {
   await page.goto('/explore/Squid')
   await expect(panel).toContainText('Person')
 })
+
+test('arrow keys browse neighbours and Enter steps into one', async ({ page }) => {
+  await page.goto('/explore/Octopus')
+  await expect(page.getByRole('link', { name: 'Go to Squid' })).toBeVisible()
+
+  await page.keyboard.press('ArrowRight')
+  const first = page.locator('[data-nb]:focus')
+  await expect(first).toHaveCount(1)
+  const before = await first.getAttribute('aria-label')
+
+  await page.keyboard.press('ArrowDown')
+  await expect(page.locator('[data-nb]:focus')).not.toHaveAttribute('aria-label', before ?? '')
+
+  await page.keyboard.press('Enter')
+  await expect(page).not.toHaveURL(/\/explore\/Octopus$/)
+  await expect(thread(page)).toContainText('1 HOP')
+})
+
+test('hovering a neighbour shows a peek card with its summary', async ({ page }) => {
+  await page.goto('/explore/Octopus')
+  await page.getByRole('link', { name: 'Go to Squid' }).hover()
+  await expect(page.getByText('Squid is a topic in the fake encyclopedia.').first()).toBeVisible()
+})

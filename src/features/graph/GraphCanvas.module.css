@@ -119,6 +119,25 @@
   font-style: italic;
 }
 
+/* Leaving nodes and edges: they drift toward the topic you chose and fade. Must stay after .node / .edge. */
+.out {
+  animation: leave 0.55s var(--ease) both;
+}
+.edgeOut {
+  animation: fadeOut 0.4s var(--ease) both;
+}
+
+@keyframes leave {
+  to {
+    opacity: 0;
+    transform: translate(var(--tx), var(--ty)) scale(0.3);
+  }
+}
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+  }
+}
 @keyframes bloom {
   from {
     opacity: 0;

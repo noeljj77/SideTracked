@@ -8,9 +8,40 @@
   gap: 24px;
   padding: 24px;
   text-align: center;
+  /* Lets the drifting words sit behind the content (z-index -1) but in front of this background. */
+  isolation: isolate;
   background:
+    radial-gradient(18rem circle at var(--mx, 50%) var(--my, 40%), rgba(240, 179, 91, 0.09), transparent 70%),
     radial-gradient(40rem 24rem at 50% 35%, rgba(142, 156, 255, 0.12), transparent 70%),
     var(--void);
+}
+
+/* Words are faint everywhere and brighten inside the lamplight around the pointer. */
+.words {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(circle 15rem at var(--mx, 50%) var(--my, 40%), #000, rgba(0, 0, 0, 0.16));
+  mask-image: radial-gradient(circle 15rem at var(--mx, 50%) var(--my, 40%), #000, rgba(0, 0, 0, 0.16));
+}
+.words span {
+  position: absolute;
+  color: var(--tide);
+  font-family: var(--font-display);
+  font-style: italic;
+  white-space: nowrap;
+  animation: drift ease-in-out infinite alternate;
+}
+
+@keyframes drift {
+  from {
+    transform: translate(-14px, 8px);
+  }
+  to {
+    transform: translate(14px, -10px);
+  }
 }
 
 .brand {
