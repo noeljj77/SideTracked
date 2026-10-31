@@ -34,8 +34,8 @@ export function TrailMap() {
     <Overlay label="Trail map" wide>
       <header className={styles.head}>
         <p className={styles.count}>
-          {nodes.length} {nodes.length === 1 ? 'TOPIC' : 'TOPICS'} · {hops}{' '}
-          {hops === 1 ? 'HOP' : 'HOPS'}
+          {nodes.length} {nodes.length === 1 ? 'topic' : 'topics'}, {hops}{' '}
+          {hops === 1 ? 'hop' : 'hops'}
         </p>
         <button type="button" className={styles.close} onClick={close}>
           Close

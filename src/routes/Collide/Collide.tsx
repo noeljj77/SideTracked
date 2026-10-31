@@ -108,9 +108,9 @@ export function Collide() {
         SideTracked
       </Link>
       <h1 className={styles.title}>
-        Collide <em>two topics.</em>
+        Collide two topics
       </h1>
-      <p className={styles.lede}>Pick any two. We'll look for the stepping stone between them.</p>
+      <p className={styles.lede}>Pick any two. We'll look for what sits between them.</p>
 
       <form onSubmit={onSubmit} className={styles.form}>
         <input

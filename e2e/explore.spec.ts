@@ -21,10 +21,10 @@ test('search, follow a neighbour, rewind via the trail, and reload keeps the tra
   await page.getByRole('link', { name: 'Go to Squid' }).click()
   await expect(page).toHaveURL(/\/explore\/Squid$/)
   await expect(thread(page)).toContainText('Octopus')
-  await expect(thread(page)).toContainText('1 HOP')
+  await expect(thread(page)).toContainText('1 hop')
 
   await page.getByRole('link', { name: 'Go to Ink' }).click()
-  await expect(thread(page)).toContainText('2 HOPS')
+  await expect(thread(page)).toContainText('2 hops')
 
   // Reload: the trail comes back from localStorage.
   await page.reload()
@@ -41,11 +41,11 @@ test('search, follow a neighbour, rewind via the trail, and reload keeps the tra
 test('browser back steps back along the trail', async ({ page }) => {
   await page.goto('/explore/Octopus')
   await page.getByRole('link', { name: 'Go to Squid' }).click()
-  await expect(thread(page)).toContainText('1 HOP')
+  await expect(thread(page)).toContainText('1 hop')
 
   await page.goBack()
   await expect(page).toHaveURL(/\/explore\/Octopus$/)
-  await expect(thread(page)).toContainText('0 HOPS')
+  await expect(thread(page)).toContainText('0 hops')
 })
 
 test('a missing topic shows a calm error and keeps the app usable', async ({ page }) => {
@@ -81,7 +81,7 @@ test('arrow keys browse neighbours and Enter steps into one', async ({ page }) =
 
   await page.keyboard.press('Enter')
   await expect(page).not.toHaveURL(/\/explore\/Octopus$/)
-  await expect(thread(page)).toContainText('1 HOP')
+  await expect(thread(page)).toContainText('1 hop')
 })
 
 test('hovering a neighbour shows a peek card with its summary', async ({ page }) => {
@@ -124,7 +124,7 @@ test('the trail map shows every step and a star takes you back to it', async ({ 
 
   await page.getByRole('button', { name: 'Map' }).click()
   const map = page.getByRole('dialog', { name: 'Trail map' })
-  await expect(map).toContainText('2 TOPICS')
+  await expect(map).toContainText('2 topics')
   await expect(map.getByRole('link', { name: 'Squid, where you are' })).toBeVisible()
 
   await map.getByRole('link', { name: 'Go back to Octopus' }).click()

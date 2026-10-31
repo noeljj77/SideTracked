@@ -7,30 +7,29 @@
 }
 .count {
   margin: 0;
-  color: var(--paper-3);
-  font-family: var(--font-mono);
+  color: var(--ink-3);
+  font-family: var(--font-body);
   font-size: 12px;
-  letter-spacing: 0.08em;
 }
 .close {
   padding: 5px 14px;
   border: 1px solid var(--line-2);
   border-radius: var(--radius-pill);
   background: transparent;
-  color: var(--paper-2);
+  color: var(--ink-2);
   font: inherit;
   font-size: 12.5px;
   cursor: pointer;
 }
 .close:hover {
-  border-color: var(--lantern);
-  color: var(--paper);
+  border-color: var(--thread);
+  color: var(--ink);
 }
 
 .empty {
   margin: 0;
   padding: 48px 24px;
-  color: var(--paper-2);
+  color: var(--ink-2);
   text-align: center;
 }
 
@@ -56,7 +55,7 @@
 
 .edge {
   fill: none;
-  stroke: var(--lantern);
+  stroke: var(--thread);
   stroke-opacity: 0.7;
   stroke-width: 1.6;
   stroke-linecap: round;
@@ -72,40 +71,41 @@
   fill: transparent;
 }
 .disc {
-  fill: var(--paper);
-  stroke: var(--lantern);
+  fill: var(--ink);
+  stroke: var(--thread);
   stroke-opacity: 0.6;
   stroke-width: 3;
   transition: fill 0.3s var(--ease);
 }
 .here .disc {
-  fill: var(--lantern);
+  fill: var(--thread);
   stroke: none;
 }
 .star:hover .disc,
 .star:focus-visible .disc {
-  fill: var(--lantern);
+  fill: var(--thread);
 }
 .star:focus-visible .hit {
-  stroke: var(--lantern);
+  stroke: var(--thread);
   stroke-width: 2;
 }
 .label {
-  fill: var(--paper);
-  font-family: var(--font-display);
+  fill: var(--ink);
+  font-family: var(--font-text);
   font-size: 17px;
   paint-order: stroke;
-  stroke: var(--deep);
+  stroke: var(--card);
   stroke-width: 4px;
   stroke-linejoin: round;
   pointer-events: none;
+  font-weight: 500;
 }
 .glow {
-  stop-color: var(--lantern);
+  stop-color: var(--thread);
   stop-opacity: 0.45;
 }
 .glowEnd {
-  stop-color: var(--deep);
+  stop-color: var(--card);
   stop-opacity: 0;
 }
 
@@ -117,15 +117,15 @@
   padding: 5px 14px;
   border: 1px solid var(--line-2);
   border-radius: var(--radius-pill);
-  background: var(--deep);
-  color: var(--paper-2);
+  background: var(--card);
+  color: var(--ink-2);
   font: inherit;
   font-size: 12.5px;
   cursor: pointer;
 }
 .reset:hover {
-  border-color: var(--lantern);
-  color: var(--paper);
+  border-color: var(--thread);
+  color: var(--ink);
 }
 .svg[data-moved] ~ .reset {
   display: block;
@@ -135,7 +135,7 @@
   right: 20px;
   bottom: 18px;
   margin: 0;
-  color: var(--paper-3);
+  color: var(--ink-3);
   font-size: 12px;
   pointer-events: none;
 }
@@ -147,6 +147,6 @@
 }
 
 .dust {
-  fill: var(--tide);
+  fill: var(--haze);
   opacity: 0.3;
 }

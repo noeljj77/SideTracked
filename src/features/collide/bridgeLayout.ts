@@ -2,7 +2,7 @@ export type Pt = { x: number; y: number }
 export type BridgeBox = { w: number; h: number; nodes: Pt[]; slots: Pt[] }
 
 const WIDE = { w: 680, h: 260, cy: 130 }
-const SLOT_X = [-165, -55, 55, 165]
+const SLOT_X = [-210, -72, 72, 210]
 const ROW = 110 // vertical gap between stones on a phone
 
 /**

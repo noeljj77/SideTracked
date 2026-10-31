@@ -6,13 +6,14 @@
 
 SideTracked is an interactive way to explore the internet's knowledge. Start with any topic and follow related topics outward through a living map of ideas. The path you take is saved as a trail you can rewind, revisit and keep.
 
-Topics come from [Wikipedia](https://www.wikipedia.org) and [Wikidata](https://www.wikidata.org), shown in SideTracked's own dark, lamplit interface.
+Topics come from [Wikipedia](https://www.wikipedia.org) and [Wikidata](https://www.wikidata.org), shown in SideTracked's own look: pinned notes on tracing paper, joined by a red thread.
 
 ## What it does
 
+- **Start anywhere.** The landing page pins five random topics to a board, each with a line on why it is worth following. Reload for a new hand, or press Shuffle.
 - **Explore as a graph.** The current topic glows amber at the centre. Related topics fan out around it, found by combining similar articles with ones that link both ways, plus a few surprising tangents. Click one to take a step. Your whole journey stays on the map behind you, fading with age under a faint starfield, and the view glides along with you. "Whole journey" zooms out to see it all.
 - **Peek before you step.** Hover a topic to see its thumbnail and first lines. Arrow keys move between topics and `Enter` steps into one. The ones you leave behind drift toward the one you chose.
-- **Handle the graph.** Scroll to zoom, drag empty space to pan, double-click it (or press "Reset view") to come home. Pull a topic aside and it springs back while its neighbours sway after it. A pool of lamplight follows your cursor, and rings of light spread out whenever you arrive somewhere.
+- **Handle the graph.** Scroll to zoom, drag empty space to pan, double-click it (or press "Reset view") to come home. Pull a topic aside and it springs back while its neighbours sway after it. A soft glow follows your cursor, and rings of light spread out whenever you arrive somewhere.
 - **Find your way on a long trail.** After three steps a minimap appears in the corner with a box for what you can see: click or drag it to move around. Pointing at a topic in the reading panel lights it up on the map, and each one says why it was offered.
 - **See your whole journey.** Press `M` (or "Map") to see every topic on your trail as a constellation you can pan and zoom. Pick a star to go back to it.
 - **Collide two topics.** Pick any two, like Octopus and Byzantine Empire, and SideTracked finds a topic that links them (Octopus, Alexander of Tralles, Byzantine Empire). Well-known stepping stones come first, and if no single topic links them it looks for a chain of two (Octopus, Ocean, New Orleans, Jazz). The answer is drawn as a glowing thread with the other meeting points hanging off it: click one to swap it in, or walk the chain as a trail. The result has its own link, so you can share it.

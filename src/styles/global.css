@@ -12,15 +12,16 @@ body,
 }
 
 body {
-  background: var(--void);
-  color: var(--paper);
+  background: var(--ground);
+  color: var(--ink);
   font-family: var(--font-body);
-  line-height: 1.6;
+  line-height: 1.55;
+  font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
 }
 
 :focus-visible {
-  outline: 2px solid var(--lantern);
+  outline: 2px solid var(--thread);
   outline-offset: 3px;
 }
 

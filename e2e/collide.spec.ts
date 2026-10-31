@@ -21,7 +21,7 @@ test('collide finds the topic between two others and walks it as a trail', async
   const thread = page.getByRole('navigation', { name: 'Your trail' })
   await expect(thread).toContainText('Octopus')
   await expect(thread).toContainText('Squid')
-  await expect(thread).toContainText('2 HOPS')
+  await expect(thread).toContainText('2 hops')
 })
 
 test('collide widens to a chain of two stones when no single one exists', async ({ page }) => {

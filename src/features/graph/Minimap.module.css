@@ -9,26 +9,26 @@
 }
 
 .trail {
-  stroke: var(--lantern);
+  stroke: var(--thread);
   stroke-opacity: 0.55;
   stroke-width: 1.2;
 }
 .visited {
-  fill: var(--paper);
+  fill: var(--ink);
   opacity: 0.85;
 }
 .current {
-  fill: var(--lantern);
+  fill: var(--thread);
 }
 .discoverable {
-  fill: var(--tide);
+  fill: var(--haze);
   opacity: 0.6;
 }
 
 /* What the screen is showing right now. */
 .view {
-  fill: color-mix(in srgb, var(--paper) 7%, transparent);
-  stroke: var(--paper-2);
+  fill: color-mix(in srgb, var(--ink) 7%, transparent);
+  stroke: var(--ink-2);
   stroke-opacity: 0.7;
   stroke-width: 1;
   rx: 3px;

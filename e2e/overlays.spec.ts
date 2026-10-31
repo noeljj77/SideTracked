@@ -39,8 +39,11 @@ test('starting a new trail saves the old one, and it can be reopened', async ({ 
 
   // Back to the landing page and begin somewhere new.
   await page.getByRole('link', { name: 'SideTracked' }).click()
-  await page.getByRole('link', { name: 'Tardigrade' }).click()
-  await expect(page).toHaveURL(/\/explore\/Tardigrade$/)
+  // The landing topics are dealt at random, so take whichever one is first.
+  const note = page.locator('main a[href^="/explore/"]').first()
+  const title = await note.locator('strong').innerText()
+  await note.click()
+  await expect(page).toHaveURL((url) => url.pathname === `/explore/${encodeURIComponent(title)}`)
 
   await page.getByRole('button', { name: 'Trails' }).click()
   const dialog = page.getByRole('dialog', { name: 'Your trails' })

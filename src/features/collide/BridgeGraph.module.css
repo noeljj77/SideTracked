@@ -8,7 +8,7 @@
 /* The thread draws itself from the first topic to the last. */
 .thread {
   fill: none;
-  stroke: var(--lantern);
+  stroke: var(--thread);
   stroke-width: 2.4;
   stroke-linecap: round;
   stroke-dasharray: 1;
@@ -25,37 +25,38 @@
   fill: transparent;
 }
 .stone:focus-visible .hit {
-  stroke: var(--lantern);
+  stroke: var(--thread);
   stroke-width: 2;
 }
 .disc {
-  fill: var(--paper);
-  stroke: var(--lantern);
+  fill: var(--ink);
+  stroke: var(--thread);
   stroke-opacity: 0.6;
   stroke-width: 4;
   transition: fill 0.3s var(--ease);
 }
 .end .disc {
-  fill: var(--lantern);
+  fill: var(--thread);
   stroke: none;
 }
 .glow {
-  fill: var(--lantern);
+  fill: var(--thread);
   opacity: 0.18;
 }
 .stone:hover .disc,
 .stone:focus-visible .disc {
-  fill: var(--lantern);
+  fill: var(--thread);
 }
 .label {
-  fill: var(--paper);
-  font-family: var(--font-display);
+  fill: var(--ink);
+  font-family: var(--font-text);
   font-size: 19px;
   paint-order: stroke;
-  stroke: var(--void);
+  stroke: var(--ground);
   stroke-width: 4px;
   stroke-linejoin: round;
   pointer-events: none;
+  font-weight: 500;
 }
 
 /* The other meeting points: dim until you reach for them. */
@@ -66,7 +67,7 @@
 }
 .moonEdge {
   fill: none;
-  stroke: var(--tide);
+  stroke: var(--haze);
   stroke-opacity: 0.18;
   stroke-width: 1;
   transition: stroke-opacity 0.3s var(--ease);
@@ -75,23 +76,24 @@
   fill: transparent;
 }
 .moonBody {
-  fill: var(--deep);
-  stroke: var(--tide);
+  fill: var(--card);
+  stroke: var(--haze);
   stroke-width: 1.5;
   transition: fill 0.3s var(--ease);
 }
 .moonLabel {
-  fill: var(--paper-3);
-  font-family: var(--font-display);
+  fill: var(--ink-3);
+  font-family: var(--font-text);
   font-size: 14px;
   transition: fill 0.3s var(--ease);
   pointer-events: none;
+  font-weight: 500;
 }
 .moon:hover .moonBody {
-  fill: var(--tide);
+  fill: var(--haze);
 }
 .moon:hover .moonLabel {
-  fill: var(--paper);
+  fill: var(--ink);
 }
 .moon:hover .moonEdge {
   stroke-opacity: 0.6;

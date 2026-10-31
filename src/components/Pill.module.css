@@ -7,7 +7,7 @@
   backdrop-filter: blur(10px);
   border: 1px solid var(--line-2);
   border-radius: var(--radius-pill);
-  color: var(--paper-2);
+  color: var(--ink-2);
   font: inherit;
   font-size: 12.5px;
   cursor: pointer;
@@ -17,17 +17,17 @@
 }
 
 .pill:hover {
-  border-color: var(--lantern);
-  color: var(--paper);
+  border-color: var(--thread);
+  color: var(--ink);
 }
 
 .pill kbd {
   padding: 1px 6px;
   border: 1px solid var(--line-2);
   border-radius: 5px;
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 11px;
-  color: var(--paper-3);
+  color: var(--ink-3);
 }
 
 @media (hover: none) {

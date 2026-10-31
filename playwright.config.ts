@@ -13,8 +13,11 @@ export default defineConfig({
     trace: 'retain-on-failure',
   },
   webServer: {
-    command: `npm run dev -- --port ${PORT} --strictPort`,
+    // A production build, not the dev server: tests run in parallel and a cold dev server transforms files on
+    // demand, which made the first lazy import (the trail map) flaky. It is also closer to what ships.
+    command: `npx vite build && npx vite preview --port ${PORT} --strictPort`,
     url: `http://localhost:${PORT}`,
-    reuseExistingServer: true,
+    reuseExistingServer: false,
+    timeout: 120_000,
   },
 })
