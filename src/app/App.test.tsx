@@ -18,6 +18,7 @@ beforeEach(() => {
       if (url.includes('search/title')) {
         return json({ pages: [{ title: 'Squid', description: 'Cephalopod' }] })
       }
+      if (url.includes('pageprops')) return json({ query: { pages: {} } })
       if (url.includes('rest_v1')) {
         return json({
           title: 'Octopus',

@@ -51,3 +51,15 @@ test('a missing topic shows a calm error and keeps the app usable', async ({ pag
   await page.getByRole('link', { name: 'SideTracked' }).click()
   await expect(page).toHaveURL('/')
 })
+
+test('topics are labelled with their kind', async ({ page }) => {
+  await page.goto('/explore/Octopus')
+  const panel = page.getByRole('complementary')
+  await expect(panel).toContainText('Thing')
+
+  await page.goto('/explore/Kraken')
+  await expect(panel).toContainText('Event')
+
+  await page.goto('/explore/Squid')
+  await expect(panel).toContainText('Person')
+})

@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { rankNeighbors } from '@/domain/ranking'
 import type { Neighbor, Topic } from '@/domain/types'
-import { ApiError } from './errors'
+import { getJson as http, parse } from '../http'
 
 const HEADERS = { 'Api-User-Agent': 'SideTracked/0.1 (https://github.com/noeljj77/SideTracked)' }
 const REST = 'https://en.wikipedia.org/api/rest_v1'
@@ -23,29 +23,7 @@ const titleSearchSchema = z.object({
   pages: z.array(z.object({ title: z.string(), description: z.string().nullish() })),
 })
 
-async function getJson(url: string, signal?: AbortSignal): Promise<unknown> {
-  let res: Response
-  try {
-    res = await fetch(url, { signal, headers: HEADERS })
-  } catch (err) {
-    if (signal?.aborted) throw err
-    throw new ApiError('Network')
-  }
-  if (res.status === 404) throw new ApiError('NotFound')
-  if (res.status === 429) throw new ApiError('RateLimited')
-  if (!res.ok) throw new ApiError('Network')
-  try {
-    return await res.json()
-  } catch {
-    throw new ApiError('Invalid')
-  }
-}
-
-function parse<T>(schema: z.ZodType<T>, data: unknown): T {
-  const result = schema.safeParse(data)
-  if (!result.success) throw new ApiError('Invalid')
-  return result.data
-}
+const getJson = (url: string, signal?: AbortSignal) => http(url, signal, HEADERS)
 
 export async function fetchTopic(id: string, signal?: AbortSignal): Promise<Topic> {
   const data = parse(

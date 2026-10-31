@@ -1,4 +1,6 @@
 import { memo, useMemo, useState, type CSSProperties } from 'react'
+import { KindGlyph } from '@/components/KindGlyph'
+import type { Kind } from '@/domain/kind'
 import type { Neighbor } from '@/domain/types'
 import { useCompact } from '@/hooks/useCompact'
 import { layoutGraph, VIEWS, type GraphNode } from './layout'
@@ -8,6 +10,7 @@ type Props = {
   current: string
   trail: string[]
   neighbors: Neighbor[]
+  kinds: Record<string, Kind>
   onSelect: (id: string) => void
 }
 
@@ -20,29 +23,41 @@ function curve(a: Pt, b: Pt) {
 }
 
 /** Positions are relative to the node's own origin; the wrapper group does the moving. */
-function Label({ n }: { n: GraphNode }) {
+function Label({ n, kind }: { n: GraphNode; kind?: Kind }) {
+  // Space for the glyph is always reserved, so labels don't shift when the kind arrives.
   if (n.state === 'current') {
     return (
-      <text className={styles.labelCurrent} y={n.r + 30} textAnchor="middle">
-        {n.id}
-      </text>
+      <>
+        {kind && <KindGlyph kind={kind} x={-6.5} y={n.r + 8} />}
+        <text className={styles.labelCurrent} y={n.r + 44} textAnchor="middle">
+          {n.id}
+        </text>
+      </>
     )
   }
   if (n.state === 'visited') {
+    // Near the left edge a centred label would be clipped, so it starts at the node instead.
+    const edge = n.x < 120
     return (
-      <text className={styles.label} y={-(n.r + 14)} textAnchor="middle">
-        {n.id}
-      </text>
+      <>
+        {kind && <KindGlyph kind={kind} x={-6.5} y={-(n.r + 43)} />}
+        <text className={styles.label} x={edge ? -6 : 0} y={-(n.r + 14)} textAnchor={edge ? 'start' : 'middle'}>
+          {n.id}
+        </text>
+      </>
     )
   }
   return (
-    <text className={styles.label} x={n.r + 12} y={5}>
-      {n.id}
-    </text>
+    <>
+      {kind && <KindGlyph kind={kind} x={n.r + 10} y={-6} />}
+      <text className={styles.label} x={n.r + 29} y={5}>
+        {n.id}
+      </text>
+    </>
   )
 }
 
-export const GraphCanvas = memo(function GraphCanvas({ current, trail, neighbors, onSelect }: Props) {
+export const GraphCanvas = memo(function GraphCanvas({ current, trail, neighbors, kinds, onSelect }: Props) {
   const view = useCompact() ? VIEWS.compact : VIEWS.wide
   const { nodes, edges } = useMemo(
     () => layoutGraph(current, trail, neighbors, view),
@@ -128,7 +143,7 @@ export const GraphCanvas = memo(function GraphCanvas({ current, trail, neighbors
               {n.state === 'discoverable' && <circle r={n.r * 2.6} fill="url(#glow-tide)" />}
               {n.state === 'visited' && <circle r={n.r + 3.5} className={styles.ring} />}
               <circle r={n.r} className={styles.body} />
-              <Label n={n} />
+              <Label n={n} kind={kinds[n.id]} />
             </g>
           </g>
         )

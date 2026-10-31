@@ -93,6 +93,13 @@
   animation: pulse 3.2s var(--ease) infinite;
 }
 
+.node {
+  color: var(--paper-3);
+}
+.current .node {
+  color: var(--paper-2);
+}
+
 .label,
 .labelCurrent {
   fill: var(--paper);

@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useKinds } from '@/api/wikidata/queries'
 import { useRelated, useTopic } from '@/api/wikipedia/queries'
 import { GraphCanvas } from '@/features/graph/GraphCanvas'
 import { ReadingPanel } from '@/features/reader/ReadingPanel'
@@ -11,6 +12,7 @@ import { useUi } from '@/stores/uiStore'
 import styles from './Explore.module.css'
 
 const EMPTY: never[] = []
+const NO_KINDS: Record<string, never> = {}
 
 export function Explore() {
   const { topic: id = '' } = useParams()
@@ -22,6 +24,10 @@ export function Explore() {
   const idle = useIdle(4000)
   const topic = useTopic(id)
   const related = useRelated(id)
+  // Look up kinds once the neighbours are known, in one batch: this topic, the recent trail, and the neighbours.
+  const kinds = useKinds(
+    related.data ? [id, ...steps.slice(-5), ...related.data.map((n) => n.id)] : [],
+  ).data ?? NO_KINDS
 
   useEffect(() => visit(id), [id, visit])
 
@@ -36,6 +42,7 @@ export function Explore() {
         current={id}
         trail={steps}
         neighbors={related.data ?? EMPTY}
+        kinds={kinds}
         onSelect={go}
       />
       <div className={styles.bar}>
@@ -47,7 +54,7 @@ export function Explore() {
         </Pill>
         <Pill onClick={() => open('trails')}>Trails</Pill>
       </div>
-      <ReadingPanel id={id} topic={topic} related={related} onSelect={go} />
+      <ReadingPanel id={id} topic={topic} related={related} kinds={kinds} onSelect={go} />
       <TrailThread
         steps={steps}
         onRewind={(i) => {

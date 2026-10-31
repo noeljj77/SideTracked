@@ -23,6 +23,27 @@
   line-height: 1.05;
 }
 
+.kind {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--paper-3);
+}
+
+.name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.name svg {
+  color: var(--paper-3);
+}
+
 .summary {
   margin: 0;
   font-size: 14px;

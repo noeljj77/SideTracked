@@ -86,7 +86,7 @@ e2e/              Playwright specs
   - Summary: `https://en.wikipedia.org/api/rest_v1/page/summary/{title}`
   - Search/autocomplete: `https://en.wikipedia.org/w/rest.php/v1/search/title?q=&limit=`
   - Related topics: Action API `list=search&srsearch=morelike:{title}` (namespace 0), ranked by result order in `domain/ranking.ts` into `strong | related | surprising`. (Merging in `prop=links` is a possible later improvement.)
-  - Category glyph: Wikidata `P31` (instance of) via `wbgetentities`, mapped to person/place/idea/event/thing.
+  - Category glyph (`api/wikidata`): one batch per page of topics. Wikipedia `prop=pageprops&ppprop=wikibase_item` maps titles to Wikidata ids (follow `normalized` and `redirects`), then one SPARQL query on `query.wikidata.org` (`?item wdt:P31/wdt:P279* ?class`, `VALUES` of the classes in `domain/kind.ts`) finds each item's kind. Precedence person > event > place > idea, default thing. Don't send `Api-User-Agent` to the SPARQL endpoint (it breaks CORS preflight). Glyphs are optional: if the lookup fails, topics simply show without one.
 - Normalise titles (spaces ↔ underscores, redirects) in one helper; the topic id is the canonical page title.
 - TanStack Query keys: `['topic', id]`, `['related', id]`, `['search', q]`. `staleTime` ≥ 1 h for summaries. Retry 2× with backoff, not on 4xx.
 - Debounce search 200 ms and abort stale requests (`signal`).
