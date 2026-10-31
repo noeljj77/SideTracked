@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react'
 import { useMedia } from '@/hooks/useMedia'
-import { bridgeLayout, smooth, type Pt } from './bridgeLayout'
+import { smooth } from '@/domain/curve'
+import { bridgeLayout, type Pt } from './bridgeLayout'
 import styles from './BridgeGraph.module.css'
 
 export type Alternative = { index: number; label: string }

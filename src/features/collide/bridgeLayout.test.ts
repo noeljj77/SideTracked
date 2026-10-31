@@ -1,4 +1,5 @@
-import { bridgeLayout, smooth } from './bridgeLayout'
+import { smooth } from '@/domain/curve'
+import { bridgeLayout } from './bridgeLayout'
 
 it('runs the stones left to right with the ends on one line and room for 8 alternatives', () => {
   const { nodes, slots, w } = bridgeLayout(4)

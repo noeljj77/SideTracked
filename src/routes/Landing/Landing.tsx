@@ -4,8 +4,10 @@ import { fetchRandomTitle } from '@/api/wikipedia/client'
 import { Pill } from '@/components/Pill'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { AccountPill } from '@/features/account/AccountPill'
-import { smooth } from '@/features/collide/bridgeLayout'
+import { smooth } from '@/domain/curve'
 import { startFresh } from '@/features/trail/actions'
+import { hopLabel } from '@/features/trail/hops'
+import { useTrail } from '@/stores/trailStore'
 import { useUi } from '@/stores/uiStore'
 import { deal } from './seeds'
 import styles from './Landing.module.css'
@@ -38,6 +40,8 @@ export function Landing() {
   const [round, setRound] = useState(0)
   const navigate = useNavigate()
   const open = useUi((s) => s.open)
+  const steps = useTrail((s) => s.steps)
+  const last = steps.at(-1)
 
   // Every start from the landing page is a new trail; the old one is kept in "Your trails".
   function begin(topic: string) {
@@ -110,6 +114,16 @@ export function Landing() {
           </button>
         </form>
         {failed && <p className={styles.note}>Couldn't fetch a surprise. Try again.</p>}
+        {last && (
+          <Link to={`/explore/${encodeURIComponent(last)}`} className={styles.resume}>
+            <span className={styles.pin} style={{ '--i': 0 } as CSSProperties} aria-hidden />
+            <span>Pick up where you left off</span>
+            <strong>{last}</strong>
+            <em>
+              {steps.length > 1 ? `${hopLabel(steps.length)} since ${steps[0]}` : 'Just started'}
+            </em>
+          </Link>
+        )}
       </section>
 
       <section className={styles.board} aria-labelledby="pick-up">
@@ -137,6 +151,7 @@ export function Landing() {
             return (
               <Link
                 key={seed.topic}
+                data-seed
                 to={`/explore/${encodeURIComponent(seed.topic)}`}
                 onClick={startFresh}
                 className={styles.noteCard}

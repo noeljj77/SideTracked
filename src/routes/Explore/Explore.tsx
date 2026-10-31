@@ -37,6 +37,14 @@ export function Explore() {
 
   return (
     <main className={styles.page} data-idle={idle}>
+      {/* The graph is a long run of tab stops; this jumps to the same topics as a plain list. */}
+      <button
+        type="button"
+        className={styles.skip}
+        onClick={() => document.getElementById('next-topics')?.focus()}
+      >
+        Skip to the list of topics
+      </button>
       <GraphCanvas
         current={id}
         trail={steps}

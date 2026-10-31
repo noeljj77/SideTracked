@@ -2,11 +2,29 @@
 
 **One thing leads to another.**
 
+[![CI](https://github.com/noeljj77/SideTracked/actions/workflows/ci.yml/badge.svg)](https://github.com/noeljj77/SideTracked/actions/workflows/ci.yml)
+
 **Live demo: https://side-tracked.vercel.app**
+
+![A short recording: dealing new starting topics, searching for Octopus, stepping through four topics as the red thread draws behind, then the map of the whole trail](docs/sidetracked-demo.gif)
 
 SideTracked is an interactive way to explore the internet's knowledge. Start with any topic and follow related topics outward through a living map of ideas. The path you take is saved as a trail you can rewind, revisit and keep.
 
 Topics come from [Wikipedia](https://www.wikipedia.org) and [Wikidata](https://www.wikidata.org), shown in SideTracked's own look: pinned notes on tracing paper, joined by a red thread.
+
+## What it looks like
+
+| The landing page | The night board |
+| --- | --- |
+| ![The landing page: a headline, a search box, and five topic notes pinned along a red thread](docs/landing-light.jpg) | ![The landing page in dark mode](docs/landing-dark.jpg) |
+
+| Exploring a topic | The same, at night |
+| --- | --- |
+| ![A trail of five topics drawn as a red thread, with the reading panel open](docs/explore-light.jpg) | ![The same view in dark mode](docs/explore-dark.jpg) |
+
+| Collide two topics | A trail as a poster |
+| --- | --- |
+| ![Octopus and the Byzantine Empire joined through Ancient Greece](docs/collide-light.jpg) | ![A ten-step trail pinned to a board and joined by a red thread](docs/poster.png) |
 
 ## What it does
 
@@ -17,11 +35,15 @@ Topics come from [Wikipedia](https://www.wikipedia.org) and [Wikidata](https://w
 - **Find your way on a long trail.** After three steps a minimap appears in the corner with a box for what you can see: click or drag it to move around. Pointing at a topic in the reading panel lights it up on the map, and each one says why it was offered.
 - **See your whole journey.** Press `M` (or "Map") to see every topic on your trail as a constellation you can pan and zoom. Pick a star to go back to it.
 - **Collide two topics.** Pick any two, like Octopus and Byzantine Empire, and SideTracked finds a topic that links them (Octopus, Alexander of Tralles, Byzantine Empire). Well-known stepping stones come first, and if no single topic links them it looks for a chain of two (Octopus, Ocean, New Orleans, Jazz). The answer is drawn as a glowing thread with the other meeting points hanging off it: click one to swap it in, or walk the chain as a trail. The result has its own link, so you can share it.
+- **Pick up where you left off.** Your last trail waits on the landing page as a pinned note.
 - **Keep your trail.** Every step is recorded along the bottom. Click an earlier step to rewind, or use the browser's back button. Trails are saved in your browser, and sync across devices if you sign in with Google.
+- **Make a poster.** "Download poster" in Your trails turns any trail into an image: every topic pinned to a board and joined by the red thread.
+- **Light or dark.** The toggle in the top bar switches between the paper board and the night board. It follows your system setting until you choose.
 - **Jump anywhere.** Press `Ctrl K` (or `/`) to search any topic, pick "Surprise me" for a random article, or open your saved trails.
 - **See what kind of thing it is.** Small icons mark each topic as a person, place, event, idea or thing.
 - **Read without leaving.** A side panel shows the summary and links to the full Wikipedia article.
 - **Works on phones.** The panel becomes a bottom sheet and the graph reflows to a portrait layout.
+- **Works without a mouse.** Every topic on the graph is a tab stop, a "Skip to the list of topics" button jumps to the same topics as a plain list, and an automated audit (axe) and a contrast check run on both themes.
 
 ## Getting started
 
@@ -56,8 +78,9 @@ For a hosted site, add the same four `VITE_FIREBASE_*` values as environment var
 | `npm run typecheck` | Typecheck the app and the e2e tests |
 | `npm test` | Run unit and component tests (Vitest) |
 | `npm run test:e2e` | Run end-to-end tests (Playwright, uses Chrome) |
+| `npm run screenshots` | Retake the README screenshots and social image (needs `npm run dev` running) |
 
-The e2e tests use a fake Wikipedia, so no tests touch the live site. On a machine without Chrome, run `npx playwright install chrome` first.
+GitHub Actions runs lint, typecheck, unit tests, the build and the e2e tests on every push and pull request. The e2e tests use a fake Wikipedia, so no tests touch the live site. On a machine without Chrome, run `npx playwright install chrome` first.
 
 ## Built with
 

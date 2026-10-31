@@ -40,7 +40,7 @@ test('starting a new trail saves the old one, and it can be reopened', async ({ 
   // Back to the landing page and begin somewhere new.
   await page.getByRole('link', { name: 'SideTracked' }).click()
   // The landing topics are dealt at random, so take whichever one is first.
-  const note = page.locator('main a[href^="/explore/"]').first()
+  const note = page.locator('main a[data-seed]').first()
   const title = await note.locator('strong').innerText()
   await note.click()
   await expect(page).toHaveURL((url) => url.pathname === `/explore/${encodeURIComponent(title)}`)
@@ -51,4 +51,15 @@ test('starting a new trail saves the old one, and it can be reopened', async ({ 
 
   await expect(page).toHaveURL(/\/explore\/Squid$/)
   await expect(page.getByRole('navigation', { name: 'Your trail' })).toContainText('Octopus')
+})
+
+test('a trail can be downloaded as a poster image', async ({ page }) => {
+  await page.goto('/explore/Octopus')
+  await page.getByRole('link', { name: 'Go to Squid' }).click()
+  await expect(page).toHaveURL(/\/explore\/Squid$/)
+
+  await page.getByRole('button', { name: 'Trails' }).click()
+  const download = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Download poster' }).click()
+  expect((await download).suggestedFilename()).toBe('sidetracked-octopus-to-squid.png')
 })
