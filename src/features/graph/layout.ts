@@ -29,13 +29,34 @@ export type View = {
 export const VIEWS = {
   // Visited steps zigzag leftwards so their labels never overlap.
   wide: {
-    w: 1000, h: 600, cx: 300, cy: 300, ring: 170, maxX: 480, maxNeighbors: 9, maxVisited: 3,
-    slots: [{ dx: -110, dy: 10 }, { dx: -170, dy: 95 }, { dx: -230, dy: -70 }],
+    w: 1000,
+    h: 600,
+    cx: 300,
+    cy: 300,
+    ring: 170,
+    maxX: 480,
+    maxNeighbors: 9,
+    maxVisited: 3,
+    slots: [
+      { dx: -110, dy: 10 },
+      { dx: -170, dy: 95 },
+      { dx: -230, dy: -70 },
+    ],
   },
   // Portrait: graph sits in the top half, above the bottom sheet.
   compact: {
-    w: 400, h: 600, cx: 110, cy: 250, ring: 100, maxX: 210, maxNeighbors: 5, maxVisited: 2,
-    slots: [{ dx: -60, dy: -75 }, { dx: -60, dy: -150 }],
+    w: 400,
+    h: 600,
+    cx: 110,
+    cy: 250,
+    ring: 100,
+    maxX: 210,
+    maxNeighbors: 5,
+    maxVisited: 2,
+    slots: [
+      { dx: -60, dy: -75 },
+      { dx: -60, dy: -150 },
+    ],
   },
 } satisfies Record<string, View>
 export const VIEW = VIEWS.wide
@@ -95,8 +116,16 @@ export function layoutGraph(
         .distance(160),
     )
     .force('charge', forceManyBody().strength(-320))
-    .force('collide', forceCollide<SimNode>((d) => (d.state === 'visited' ? 70 : d.r + 40)))
-    .force('x', forceX<SimNode>((d) => (d.state === 'visited' ? cx - ring * 1.5 : cx + ring * 0.9)).strength(0.04))
+    .force(
+      'collide',
+      forceCollide<SimNode>((d) => (d.state === 'visited' ? 70 : d.r + 40)),
+    )
+    .force(
+      'x',
+      forceX<SimNode>((d) => (d.state === 'visited' ? cx - ring * 1.5 : cx + ring * 0.9)).strength(
+        0.04,
+      ),
+    )
     .force('y', forceY(cy).strength(0.03))
     .stop()
   for (let i = 0; i < 300; i++) sim.tick()

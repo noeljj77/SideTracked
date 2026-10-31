@@ -5,9 +5,12 @@ test.beforeEach(async ({ page }) => {
   await mockWikipedia(page)
 })
 
-const thread = (page: import('@playwright/test').Page) => page.getByRole('navigation', { name: 'Your trail' })
+const thread = (page: import('@playwright/test').Page) =>
+  page.getByRole('navigation', { name: 'Your trail' })
 
-test('search, follow a neighbour, rewind via the trail, and reload keeps the trail', async ({ page }) => {
+test('search, follow a neighbour, rewind via the trail, and reload keeps the trail', async ({
+  page,
+}) => {
   await page.goto('/')
   await page.getByLabel('Topic').fill('Octopus')
   await page.keyboard.press('Enter')
@@ -85,4 +88,31 @@ test('hovering a neighbour shows a peek card with its summary', async ({ page })
   await page.goto('/explore/Octopus')
   await page.getByRole('link', { name: 'Go to Squid' }).hover()
   await expect(page.getByText('Squid is a topic in the fake encyclopedia.').first()).toBeVisible()
+})
+
+test('the wheel zooms the graph, and Reset view brings it home', async ({ page }) => {
+  await page.goto('/explore/Octopus')
+  const graph = page.getByRole('group', { name: 'Topics connected to Octopus' })
+  await expect(page.getByRole('link', { name: 'Go to Squid' })).toBeVisible()
+  await graph.hover()
+  await page.mouse.wheel(0, -400)
+  await expect(graph).toHaveAttribute('data-moved', '')
+  await page.getByRole('button', { name: 'Reset view' }).click()
+  await expect(graph).not.toHaveAttribute('data-moved')
+})
+
+test('dragging a neighbour does not step into it', async ({ page }) => {
+  await page.goto('/explore/Octopus')
+  const squid = page.getByRole('link', { name: 'Go to Squid' })
+  const box = await squid.locator('circle').first().boundingBox()
+  if (!box) throw new Error('Squid has no box')
+  const x = box.x + box.width / 2
+  const y = box.y + box.height / 2
+  await page.mouse.move(x, y)
+  await page.mouse.down()
+  await page.mouse.move(x + 60, y + 40, { steps: 6 })
+  await page.mouse.up()
+  await expect(page).toHaveURL(/\/explore\/Octopus$/)
+  await squid.click()
+  await expect(page).toHaveURL(/\/explore\/Squid$/)
 })

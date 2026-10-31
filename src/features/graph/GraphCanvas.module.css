@@ -165,3 +165,82 @@
     transform: scale(1.35);
   }
 }
+
+/* Pan, zoom and drag. */
+.svg {
+  touch-action: none;
+  cursor: grab;
+}
+.svg[data-panning] {
+  cursor: grabbing;
+}
+.bg {
+  fill: transparent;
+}
+/* While a node is pulled, edges must follow at once instead of easing. */
+.live .edge {
+  transition: opacity 0.35s var(--ease);
+}
+.resetView {
+  display: none;
+  position: absolute;
+  left: 24px;
+  bottom: 96px;
+  padding: 6px 14px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-pill);
+  background: var(--deep);
+  color: var(--paper-2);
+  font: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition:
+    border-color 0.3s var(--ease),
+    color 0.3s var(--ease);
+}
+.resetView:hover {
+  border-color: var(--lantern);
+  color: var(--paper);
+}
+
+/* Lamplight: a warm pool of light under the cursor. */
+.light {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s var(--ease);
+  background: radial-gradient(
+    circle 14rem at var(--lx, 50%) var(--ly, 50%),
+    color-mix(in srgb, var(--lantern) 10%, transparent),
+    transparent 70%
+  );
+}
+
+/* Arriving on a topic sends rings of light outwards. */
+.ripple {
+  fill: none;
+  stroke: var(--lantern);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ripple 1.5s var(--ease) both;
+}
+.ripple2 {
+  animation-delay: 0.2s;
+}
+@keyframes ripple {
+  from {
+    opacity: 0.55;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 0;
+    transform: scale(13);
+  }
+}
+
+.svg[data-moved] ~ .resetView {
+  display: block;
+}
