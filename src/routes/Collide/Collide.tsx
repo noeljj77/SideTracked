@@ -9,10 +9,23 @@ import styles from './Collide.module.css'
 
 const CHIPS = 8
 
-function Stone({ id, index, ends, onWalk }: { id: string; index: number; ends: boolean; onWalk: () => void }) {
+function Stone({
+  id,
+  index,
+  ends,
+  onWalk,
+}: {
+  id: string
+  index: number
+  ends: boolean
+  onWalk: () => void
+}) {
   const { data } = useTopic(id)
   return (
-    <li className={`${styles.stone} ${ends ? styles.end : ''}`} style={{ '--i': index } as CSSProperties}>
+    <li
+      className={`${styles.stone} ${ends ? styles.end : ''}`}
+      style={{ '--i': index } as CSSProperties}
+    >
       <span className={styles.disc} aria-hidden />
       <div className={styles.card}>
         <Link className={styles.name} to={`/explore/${encodeURIComponent(id)}`} onClick={onWalk}>
@@ -20,7 +33,9 @@ function Stone({ id, index, ends, onWalk }: { id: string; index: number; ends: b
         </Link>
         {data && <p className={styles.summary}>{data.summary}</p>}
       </div>
-      {data?.thumbnail && <img className={styles.thumb} src={data.thumbnail} alt="" loading="lazy" />}
+      {data?.thumbnail && (
+        <img className={styles.thumb} src={data.thumbnail} alt="" loading="lazy" />
+      )}
     </li>
   )
 }
@@ -30,7 +45,7 @@ function Stones({ bridge }: { bridge: Bridge }) {
   const [pick, setPick] = useState(0)
   const navigate = useNavigate()
   const middle = bridge.via[pick]
-  const path = middle ? [bridge.from, middle, bridge.to] : [bridge.from, bridge.to]
+  const path = [bridge.from, ...(middle ?? []), bridge.to]
 
   // Walking keeps the stones up to (and including) the one you chose as your trail, so it can be saved.
   const walk = (upTo: number) => openTrail(path.slice(0, upTo + 1))
@@ -42,22 +57,28 @@ function Stones({ bridge }: { bridge: Bridge }) {
       </p>
       <ol className={styles.stones}>
         {path.map((id, i) => (
-          <Stone key={id} id={id} index={i} ends={i === 0 || i === path.length - 1} onWalk={() => walk(i)} />
+          <Stone
+            key={id}
+            id={id}
+            index={i}
+            ends={i === 0 || i === path.length - 1}
+            onWalk={() => walk(i)}
+          />
         ))}
       </ol>
       {bridge.via.length > 1 && (
         <div className={styles.others}>
           <p className={styles.hops}>Other meeting points</p>
           <ul className={styles.chips}>
-            {bridge.via.slice(0, CHIPS).map((id, i) => (
-              <li key={id}>
+            {bridge.via.slice(0, CHIPS).map((stones, i) => (
+              <li key={stones.join('>')}>
                 <button
                   className={styles.chip}
                   aria-pressed={i === pick}
                   onClick={() => setPick(i)}
                   type="button"
                 >
-                  {id}
+                  {stones.join(' → ')}
                 </button>
               </li>
             ))}
@@ -130,8 +151,10 @@ export function Collide() {
         {isFetching && (
           <p className={styles.status}>
             <span className={styles.dots} aria-hidden />
-            Searching the dark…
-            {progress && (
+            {progress?.longer
+              ? 'Nothing between them. Looking for longer chains…'
+              : 'Searching the dark…'}
+            {progress && !progress.longer && (
               <em>
                 {progress.checked} of {progress.total} connections checked
               </em>
@@ -140,13 +163,16 @@ export function Collide() {
         )}
         {isError && (
           <p className={styles.status}>
-            {error instanceof Unresolved ? describeError(error.reason, error.id) : describeError(error, '')}
+            {error instanceof Unresolved
+              ? describeError(error.reason, error.id)
+              : describeError(error, '')}
           </p>
         )}
         {!isFetching && sameTopic && <p className={styles.status}>Those are the same topic.</p>}
         {!isFetching && nothing && (
           <p className={styles.status}>
-            Nothing sits between those two. Try a pair that is a little closer, or one with more to say.
+            Nothing sits between those two. Try a pair that is a little closer, or one with more to
+            say.
           </p>
         )}
         {!isFetching && data && !sameTopic && !nothing && (

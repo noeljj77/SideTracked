@@ -24,8 +24,15 @@ test('collide finds the topic between two others and walks it as a trail', async
   await expect(thread).toContainText('2 HOPS')
 })
 
-test('collide says so calmly when nothing sits between two topics', async ({ page }) => {
+test('collide widens to a chain of two stones when no single one exists', async ({ page }) => {
   await page.goto('/collide?from=Ink&to=Kraken')
+  await expect(page.getByText('3 hops')).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Octopus' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Squid' })).toBeVisible()
+})
+
+test('collide says so calmly when nothing sits between two topics', async ({ page }) => {
+  await page.goto('/collide?from=Island&to=Kraken')
   await expect(page.getByText('Nothing sits between those two.')).toBeVisible()
 })
 

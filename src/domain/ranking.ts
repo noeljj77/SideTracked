@@ -1,4 +1,5 @@
 import { isBoilerplate } from './bridge'
+import { notable } from './notable'
 import type { Neighbor } from './types'
 
 /** An article that links to the current topic and is linked from it, with its size in characters. */
@@ -8,13 +9,6 @@ const SIMILAR = 50 // how deep into the similarity list we look
 const CORE = 6
 const TANGENTS = 3
 const STRONG_RANK = 12 // top similar results that are also linked both ways count as strong
-
-/**
- * Tangents should be notable without being generic: a mid-large article beats a country or a stub.
- * shortcut: size is a rough stand-in for fame, upgrade to page views if tangents feel random.
- */
-const notable = (length: number) =>
-  Math.exp(-((Math.log10(Math.max(length, 1)) - Math.log10(120_000)) ** 2) / (2 * 0.35 ** 2))
 
 /**
  * Combine two signals. `similar` is text similarity, best first. `mutual` are articles that link to the

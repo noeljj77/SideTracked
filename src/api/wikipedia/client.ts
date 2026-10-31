@@ -92,6 +92,7 @@ const mutualSchema = z.object({
         z.object({
           title: z.string(),
           length: z.number().optional(),
+          missing: z.boolean().optional(),
           links: z.array(z.object({ title: z.string() })).optional(),
         }),
       ),
@@ -146,30 +147,64 @@ const LINK_PAGES = 8 // 500 links per request: enough for the biggest articles
 const BATCH = 50 // titles per request, the API's limit
 const PARALLEL = 4 // polite to Wikipedia, and still quick
 
-/** Every article this one links to (main namespace), following continuation. */
-export async function fetchLinks(id: string, signal?: AbortSignal): Promise<string[]> {
-  const out: string[] = []
+/** Every article this one links to (main namespace) with its size, following continuation. */
+export async function fetchLinks(id: string, signal?: AbortSignal): Promise<Mutual[]> {
+  const out = new Map<string, number>()
   let more: Record<string, string> = {}
   for (let i = 0; i < LINK_PAGES; i++) {
     const data = parse(
-      linksSchema,
+      mutualSchema,
       await getJson(
         linksUrl({
-          prop: 'links',
+          generator: 'links',
           titles: id,
-          pllimit: 'max',
-          plnamespace: '0',
+          gplnamespace: '0',
+          gpllimit: 'max',
+          prop: 'info',
           redirects: '1',
           ...more,
         }),
         signal,
       ),
     )
-    for (const page of data.query?.pages ?? []) out.push(...(page.links ?? []).map((l) => l.title))
+    for (const page of data.query?.pages ?? []) {
+      if (!page.missing) out.set(page.title, page.length ?? out.get(page.title) ?? 0)
+    }
     if (!data.continue) break
     more = data.continue
   }
-  return out
+  return [...out].map(([title, length]) => ({ id: title, length }))
+}
+
+/**
+ * Pairs [x, y] where article x links to article y, for x in `xs` and y in `ys`. Each request checks
+ * 50 × 50 titles, so a few hundred of each is a handful of calls.
+ */
+export async function fetchLinksAmong(
+  xs: string[],
+  ys: string[],
+  signal?: AbortSignal,
+): Promise<[string, string][]> {
+  const chunks = (list: string[]) =>
+    Array.from({ length: Math.ceil(list.length / BATCH) }, (_, i) =>
+      list.slice(i * BATCH, (i + 1) * BATCH),
+    )
+  const jobs = chunks(xs).flatMap((x) => chunks(ys).map((y) => ({ x, y })))
+  const found = await Promise.all(
+    jobs.map(async ({ x, y }) => {
+      const data = parse(
+        linksSchema,
+        await getJson(
+          linksUrl({ prop: 'links', titles: x.join('|'), pltitles: y.join('|'), pllimit: 'max' }),
+          signal,
+        ),
+      )
+      return (data.query?.pages ?? []).flatMap((page) =>
+        (page.links ?? []).map((l): [string, string] => [page.title, l.title]),
+      )
+    }),
+  )
+  return found.flat()
 }
 
 /**

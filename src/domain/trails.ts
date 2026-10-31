@@ -14,7 +14,11 @@ export function mergeTrails(local: SavedTrail[], remote: SavedTrail[]): SavedTra
 /** Where saved trails live for a signed-in user. Implemented by the Firebase client, faked in tests. */
 export type TrailsRepo = {
   /** Calls back with the full list now and on every change. Returns an unsubscribe function. */
-  subscribe: (uid: string, onTrails: (trails: SavedTrail[]) => void, onError: (err: unknown) => void) => () => void
+  subscribe: (
+    uid: string,
+    onTrails: (trails: SavedTrail[]) => void,
+    onError: (err: unknown) => void,
+  ) => () => void
   upsert: (uid: string, trail: SavedTrail) => Promise<void>
   remove: (uid: string, id: string) => Promise<void>
 }

@@ -1,6 +1,7 @@
 import {
   fetchLinkers,
   fetchLinks,
+  fetchLinksAmong,
   fetchMutual,
   fetchRandomTitle,
   fetchRelated,
@@ -118,19 +119,41 @@ it('collects links across continuation pages', async () => {
     .mockResolvedValueOnce(
       new Response(
         JSON.stringify({
-          continue: { plcontinue: 'x', continue: '||' },
-          query: { pages: [{ title: 'Octopus', links: [{ title: 'Squid' }] }] },
+          continue: { gplcontinue: 'x', continue: 'gplcontinue||' },
+          query: {
+            pages: [
+              { title: 'Squid', length: 5000 },
+              { title: 'Gone', missing: true },
+            ],
+          },
         }),
       ),
     )
     .mockResolvedValueOnce(
-      new Response(
-        JSON.stringify({ query: { pages: [{ title: 'Octopus', links: [{ title: 'Ink' }] }] } }),
-      ),
+      new Response(JSON.stringify({ query: { pages: [{ title: 'Ink', length: 900 }] } })),
     )
   vi.stubGlobal('fetch', fetchMock)
-  expect(await fetchLinks('Octopus')).toEqual(['Squid', 'Ink'])
-  expect(String(fetchMock.mock.calls[1]?.[0])).toContain('plcontinue=x')
+  expect(await fetchLinks('Octopus')).toEqual([
+    { id: 'Squid', length: 5000 },
+    { id: 'Ink', length: 900 },
+  ])
+  expect(String(fetchMock.mock.calls[1]?.[0])).toContain('gplcontinue=x')
+})
+
+it('finds which of some articles link to which of others, 50 by 50', async () => {
+  const xs = Array.from({ length: 60 }, (_, i) => `X${i}`)
+  const ys = ['Y1', 'Y2']
+  const fetchMock = vi.fn(async (url: string) => {
+    const asked = new URL(url).searchParams.get('titles')?.split('|') ?? []
+    const pages = asked.map((title) => ({
+      title,
+      ...(title === 'X55' ? { links: [{ title: 'Y2' }] } : {}),
+    }))
+    return new Response(JSON.stringify({ query: { pages } }))
+  })
+  vi.stubGlobal('fetch', fetchMock)
+  expect(await fetchLinksAmong(xs, ys)).toEqual([['X55', 'Y2']])
+  expect(fetchMock).toHaveBeenCalledTimes(2)
 })
 
 it('asks which articles link to a target in batches of 50 and keeps the given order', async () => {

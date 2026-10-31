@@ -2,10 +2,12 @@ import type { Page } from '@playwright/test'
 
 /** A tiny fake Wikipedia: every topic links to the topics listed for it. Tests never hit the real site. */
 const LINKS: Record<string, string[]> = {
-  Octopus: ['Squid', 'Cuttlefish', 'Nautilus'],
+  Octopus: ['Squid', 'Cuttlefish', 'Nautilus', 'Ink'],
   Squid: ['Ink', 'Octopus', 'Kraken'],
   Ink: ['Octopus'],
   Kraken: ['Squid'],
+  Island: ['Reef'],
+  Reef: ['Island'],
 }
 
 /** Fake Wikidata: item ids per title, and which of them are people / events. Everything else is a "thing". */
