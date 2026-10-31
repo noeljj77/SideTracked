@@ -6,6 +6,10 @@ const LINKS: Record<string, string[]> = {
   Squid: ['Ink', 'Octopus', 'Kraken'],
   Ink: ['Octopus'],
   Kraken: ['Squid'],
+  Nautilus: ['Ammonite'],
+  Ammonite: ['Fossil'],
+  Fossil: ['Museum'],
+  Museum: ['Fossil'],
   Island: ['Reef'],
   Reef: ['Island'],
 }

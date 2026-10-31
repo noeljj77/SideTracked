@@ -141,3 +141,15 @@ test('M opens the trail map and Escape closes it', async ({ page }) => {
   await page.keyboard.press('Escape')
   await expect(page.getByRole('dialog', { name: 'Trail map' })).toBeHidden()
 })
+
+test('a long journey stays on the map instead of dropping the early steps', async ({ page }) => {
+  await page.goto('/explore/Octopus')
+  for (const next of ['Nautilus', 'Ammonite', 'Fossil', 'Museum']) {
+    await page.getByRole('link', { name: `Go to ${next}` }).click()
+    await expect(page).toHaveURL(new RegExp(`/explore/${next}$`))
+  }
+  // Five steps in, the very first topic is still part of the graph.
+  await expect(page.getByRole('link', { name: 'Go to Octopus' })).toBeAttached()
+  await expect(page.getByRole('link', { name: 'Go to Nautilus' })).toBeAttached()
+  await expect(page.getByRole('button', { name: 'Whole journey' })).toBeVisible()
+})

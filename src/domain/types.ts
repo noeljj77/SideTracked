@@ -14,3 +14,6 @@ export type Topic = {
 export type Why = 'both' | 'similar' | 'tangent'
 
 export type Neighbor = { id: string; strength: Strength; why: Why }
+
+/** A point on the graph canvas. */
+export type Pt = { x: number; y: number }

@@ -244,3 +244,50 @@
 .svg[data-moved] ~ .resetView {
   display: block;
 }
+
+/* The journey is one big world: old steps fade a little, and faint stars mark the empty space. */
+.visited {
+  opacity: var(--fade, 1);
+}
+.place.dim {
+  opacity: 0.25;
+}
+.dust {
+  fill: var(--tide);
+  opacity: 0.28;
+  pointer-events: none;
+}
+.journey {
+  position: absolute;
+  left: 24px;
+  bottom: 96px;
+  padding: 6px 14px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-pill);
+  background: var(--deep);
+  color: var(--paper-2);
+  font: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition:
+    border-color 0.3s var(--ease),
+    color 0.3s var(--ease);
+}
+.journey:hover {
+  border-color: var(--lantern);
+  color: var(--paper);
+}
+.resetView {
+  left: 150px;
+}
+@media (max-width: 899px) {
+  .journey,
+  .resetView {
+    bottom: auto;
+    top: 64px;
+  }
+}
+
+.labelHit {
+  fill: transparent;
+}

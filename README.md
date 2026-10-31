@@ -10,7 +10,7 @@ Topics come from [Wikipedia](https://www.wikipedia.org) and [Wikidata](https://w
 
 ## What it does
 
-- **Explore as a graph.** The current topic glows amber at the centre. Related topics fan out around it, found by combining similar articles with ones that link both ways, plus a few surprising tangents. Click one to take a step.
+- **Explore as a graph.** The current topic glows amber at the centre. Related topics fan out around it, found by combining similar articles with ones that link both ways, plus a few surprising tangents. Click one to take a step. Your whole journey stays on the map behind you, fading with age under a faint starfield, and the view glides along with you. "Whole journey" zooms out to see it all.
 - **Peek before you step.** Hover a topic to see its thumbnail and first lines. Arrow keys move between topics and `Enter` steps into one. The ones you leave behind drift toward the one you chose.
 - **Handle the graph.** Scroll to zoom, drag empty space to pan, double-click it (or press "Reset view") to come home. Pull a topic aside and it springs back while its neighbours sway after it. A pool of lamplight follows your cursor, and rings of light spread out whenever you arrive somewhere.
 - **See your whole journey.** Press `M` (or "Map") to see every topic on your trail as a constellation you can pan and zoom. Pick a star to go back to it.

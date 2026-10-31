@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, type RefObject } from 'react'
 
-export const MIN_ZOOM = 0.5
+export const MIN_ZOOM = 0.12
 export const MAX_ZOOM = 3
 
 export type Transform = { k: number; x: number; y: number }
@@ -17,20 +17,29 @@ export function zoomAround(t: Transform, factor: number, px: number, py: number)
 
 /**
  * Wheel to zoom, drag the background to pan, double-click the background to reset. The transform is
- * written straight to `layer`, so moving the view never re-renders React. `resetKey` snaps the
- * view home when it changes (the topic did). Only elements marked `data-pan` start a pan.
+ * written straight to `layer`, so moving the view never re-renders React. `home` is where the view rests
+ * (the origin unless given); it glides there whenever `resetKey` or `home` changes (the topic did). Only elements marked `data-pan` start a pan.
  * While the view is off home the svg carries `data-moved`, which CSS uses to show a Reset button.
  */
 export function usePanZoom(
   svg: RefObject<SVGSVGElement | null>,
   layer: RefObject<SVGGElement | null>,
   resetKey: unknown,
+  home: Transform = HOME,
 ) {
-  const t = useRef<Transform>(HOME)
+  const t = useRef<Transform>(home)
+  const rest = useRef<Transform>(home)
+  const settled = useRef(false)
   const place = useRef<(next: Transform, smooth?: boolean) => void>(() => {})
 
-  const reset = useCallback(() => place.current(HOME, true), [])
-  useEffect(() => place.current(HOME), [resetKey])
+  const reset = useCallback(() => place.current(rest.current, true), [])
+  /** Glide to any view, e.g. one that shows the whole journey. */
+  const goTo = useCallback((to: Transform) => place.current(to, true), [])
+  useEffect(() => {
+    rest.current = home
+    place.current(home, settled.current)
+    settled.current = true
+  }, [resetKey, home.k, home.x, home.y]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const el = svg.current
@@ -39,13 +48,15 @@ export function usePanZoom(
       t.current = next
       const g = layer.current
       if (!g) return
-      g.style.setProperty('transition', smooth ? 'transform 0.5s var(--ease)' : 'none')
+      g.style.setProperty('transition', smooth ? 'transform 0.9s var(--ease)' : 'none')
       g.style.setProperty('transform', `translate(${next.x}px, ${next.y}px) scale(${next.k})`)
-      const home = next.k === HOME.k && next.x === HOME.x && next.y === HOME.y
-      if (home) delete el.dataset.moved
+      const r = rest.current
+      const atRest = next.k === r.k && next.x === r.x && next.y === r.y
+      if (atRest) delete el.dataset.moved
       else el.dataset.moved = ''
     }
     place.current = apply
+    apply(rest.current) // the first placement, before any glide
 
     /** Pixels on screen per unit of svg coordinates. */
     const unit = () => el.getScreenCTM()?.a ?? 1
@@ -82,7 +93,7 @@ export function usePanZoom(
       delete el.dataset.panning
     }
     const onDouble = (e: MouseEvent) => {
-      if ((e.target as Element).hasAttribute('data-pan')) apply(HOME, true)
+      if ((e.target as Element).hasAttribute('data-pan')) apply(rest.current, true)
     }
 
     el.addEventListener('wheel', onWheel, { passive: false })
@@ -103,5 +114,5 @@ export function usePanZoom(
 
   /** Zoom factor now in effect, for turning screen pixels into svg units. */
   const scale = useCallback(() => t.current.k, [])
-  return { reset, scale }
+  return { reset, goTo, scale }
 }

@@ -1,4 +1,5 @@
 import { forceCollide, forceSimulation, type SimulationNodeDatum } from 'd3-force'
+import { unit } from '@/domain/hash'
 
 export type MapNode = { id: string; x: number; y: number; first: number; last: number }
 export type MapEdge = { source: string; target: string }
@@ -13,13 +14,6 @@ export type MapLayout = {
 
 const STEP = 130
 const PAD = 120
-
-/** A stable number in [0, 1) for a title, so the same trail always draws the same shape. */
-function unit(text: string) {
-  let h = 2166136261
-  for (let i = 0; i < text.length; i++) h = Math.imul(h ^ text.charCodeAt(i), 16777619)
-  return ((h >>> 0) % 10000) / 10000
-}
 
 type Sim = SimulationNodeDatum & { id: string }
 

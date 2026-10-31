@@ -102,7 +102,7 @@ e2e/              Playwright specs
 - **Server data (topics, related) belongs to TanStack Query. Client state (trail, current node, UI) belongs to Zustand.** Don't copy query data into stores.
 - Graph store holds only ids, positions, and node state (`current | visited | discoverable | distant`); look topics up from the query cache.
 - Node state is derived from the trail, not stored twice.
-- Cap the visible graph (current + neighbours + one distant ring); prune old nodes but keep them in the trail.
+- The graph is one persistent world: the last 80 steps of the trail all stay drawn where they were placed (`layoutGraph` in `features/graph/layout.ts`; positions are remembered in `stores/worldStore.ts`, so a neighbour you pick does not move when it becomes the current topic, and the layout is deterministic after a reload). Only the current topic's neighbours fan out (max 9, 5 on phones). A camera (`home` from the layout, applied by `usePanZoom`) glides to the current topic on every step; "Whole journey" zooms out to everything. Older steps fade with age. Beyond 80 steps they live on in the trail thread and the trail map.
 - Persisted state is versioned (`version` + `migrate` in `persist`). Never break existing saved trails without a migration.
 
 ## Accounts and sync

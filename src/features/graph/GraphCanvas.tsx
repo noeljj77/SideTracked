@@ -13,7 +13,8 @@ import type { Neighbor } from '@/domain/types'
 import { isTyping } from '@/hooks/useShortcuts'
 import { useCompact } from '@/hooks/useCompact'
 import { useUi } from '@/stores/uiStore'
-import { layoutGraph, VIEWS, type GraphEdge, type GraphNode } from './layout'
+import { useWorld } from '@/stores/worldStore'
+import { fitAll, layoutGraph, VIEWS, type GraphEdge, type GraphNode } from './layout'
 import { Peek, type PeekAnchor } from './Peek'
 import { usePanZoom } from './usePanZoom'
 import styles from './GraphCanvas.module.css'
@@ -68,18 +69,20 @@ function Label({ n, kind }: { n: GraphNode; kind?: Kind }) {
       </>
     )
   }
+  // Text itself is not clickable between its letters, so each label gets a soft box to aim at.
+  const wide = n.id.length * 9 + 24
   if (n.state === 'visited') {
-    // Near the left edge a centred label would be clipped, so it starts at the node instead.
-    const edge = n.x < 120
     return (
       <>
+        <rect
+          className={styles.labelHit}
+          x={-wide / 2}
+          y={-(n.r + 32)}
+          width={wide}
+          height={n.r + 32 + n.r}
+        />
         {kind && <KindGlyph kind={kind} x={-6.5} y={-(n.r + 43)} />}
-        <text
-          className={styles.label}
-          x={edge ? -6 : 0}
-          y={-(n.r + 14)}
-          textAnchor={edge ? 'start' : 'middle'}
-        >
+        <text className={styles.label} y={-(n.r + 14)} textAnchor="middle">
           {n.id}
         </text>
       </>
@@ -87,6 +90,7 @@ function Label({ n, kind }: { n: GraphNode; kind?: Kind }) {
   }
   return (
     <>
+      <rect className={styles.labelHit} x={n.r + 4} y={-16} width={wide + 28} height={32} />
       {kind && <KindGlyph kind={kind} x={n.r + 10} y={-6} />}
       <text className={styles.label} x={n.r + 29} y={5}>
         {n.id}
@@ -121,14 +125,16 @@ export const GraphCanvas = memo(function GraphCanvas({
 }: Props) {
   const view = useCompact() ? VIEWS.compact : VIEWS.wide
   const layout = useMemo(
-    () => layoutGraph(current, trail, neighbors, view),
+    () => layoutGraph(current, trail, neighbors, view, useWorld.getState().pos),
     [current, trail, neighbors, view],
   )
-  const { nodes, edges } = layout
+  const { nodes, edges, stars } = layout
+  // Remember where everything sits, so a neighbour you pick stays put when it becomes the current topic.
+  useEffect(() => useWorld.getState().remember(layout.world), [layout])
   const svg = useRef<SVGSVGElement>(null)
   const layer = useRef<SVGGElement>(null)
   const light = useRef<HTMLDivElement>(null)
-  const { reset, scale } = usePanZoom(svg, layer, current)
+  const { reset, goTo, scale } = usePanZoom(svg, layer, current, layout.home)
   const [hover, setHover] = useState<string | null>(null)
   const [peek, setPeek] = useState<PeekAnchor | null>(null)
   const peekTimer = useRef<number>(undefined)
@@ -331,9 +337,12 @@ export const GraphCanvas = memo(function GraphCanvas({
         <rect data-pan className={styles.bg} x={-4000} y={-4000} width={8000} height={8000} />
         <g ref={layer}>
           {/* Where you land, light spreads out in rings. */}
+          {stars.map((s, i) => (
+            <circle key={i} cx={s.x} cy={s.y} r={1.5} className={styles.dust} />
+          ))}
           <g
             key={`arrive:${current}`}
-            transform={`translate(${view.cx} ${view.cy})`}
+            transform={`translate(${byId.get(current)?.x ?? 0} ${byId.get(current)?.y ?? 0})`}
             pointerEvents="none"
             aria-hidden
           >
@@ -366,7 +375,14 @@ export const GraphCanvas = memo(function GraphCanvas({
                 key={edgeKey(e)}
                 d={d}
                 // CSS `d` lets Chrome animate the curve; other browsers snap via the attribute above.
-                style={{ d: `path("${d}")` } as CSSProperties}
+                style={
+                  {
+                    d: `path("${d}")`,
+                    ...(e.kind === 'trail' && {
+                      strokeOpacity: Math.max(0.25, 0.9 - a.age * 0.04),
+                    }),
+                  } as CSSProperties
+                }
                 className={`${styles.edge} ${e.kind === 'trail' ? styles.trail : ''} ${active ? '' : styles.dim}`}
               />
             )
@@ -399,7 +415,12 @@ export const GraphCanvas = memo(function GraphCanvas({
             return (
               <g
                 key={n.id}
-                style={{ transform: `translate(${n.x}px, ${n.y}px)` }}
+                style={
+                  {
+                    transform: `translate(${n.x}px, ${n.y}px)`,
+                    '--fade': Math.max(0.4, 1 - n.age * 0.05),
+                  } as CSSProperties
+                }
                 className={`${styles.place} ${styles[n.state]} ${dim(n.id)}`}
                 role={isCurrent ? undefined : 'link'}
                 tabIndex={isCurrent ? undefined : 0}
@@ -429,6 +450,11 @@ export const GraphCanvas = memo(function GraphCanvas({
           })}
         </g>
       </svg>
+      {nodes.length > 2 && (
+        <button type="button" className={styles.journey} onClick={() => goTo(fitAll(view, nodes))}>
+          Whole journey
+        </button>
+      )}
       <button type="button" className={styles.resetView} onClick={reset}>
         Reset view
       </button>
