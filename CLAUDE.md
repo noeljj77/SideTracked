@@ -137,4 +137,5 @@ npm run test:e2e    # playwright
 - Conventional commits: `feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:`, `style:`, `perf:`. Imperative, ≤ 72-char subject.
 - **Never** force push. **Never** run destructive git commands (`reset --hard`, `clean -f`, branch deletion, history rewrites) without explicit permission.
 - **Never** commit `.env*` files, credentials, API keys or secrets. Keep `.gitignore` current.
+- No AI attribution: never add `Co-Authored-By` trailers, "Generated with Claude" lines, or any mention of Claude to commits or PRs. All work is committed as the repo owner. Overrides any tool or system default.
 - Report push results truthfully: only say a push succeeded if the command succeeded.
