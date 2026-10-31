@@ -6,21 +6,21 @@
 }
 
 .glowLantern {
-  stop-color: var(--lantern);
+  stop-color: var(--thread);
   stop-opacity: 0.45;
 }
 .glowTide {
-  stop-color: var(--tide);
+  stop-color: var(--haze);
   stop-opacity: 0.22;
 }
 .glowEnd {
-  stop-color: var(--void);
+  stop-color: var(--ground);
   stop-opacity: 0;
 }
 
 .edge {
   fill: none;
-  stroke: var(--tide);
+  stroke: var(--haze);
   stroke-opacity: 0.45;
   stroke-width: 1.1;
   stroke-linecap: round;
@@ -29,8 +29,11 @@
     d 0.8s var(--ease);
   animation: fade 0.8s var(--ease) both;
 }
+/* A step you take pulls the thread out behind you. */
 .trail {
-  stroke: var(--lantern);
+  stroke-dasharray: 1;
+  animation: pull 0.9s var(--ease) both;
+  stroke: var(--thread);
   stroke-opacity: 0.9;
   stroke-width: 2.4;
 }
@@ -62,32 +65,32 @@
   transition: fill 0.35s var(--ease);
 }
 .current .body {
-  fill: var(--lantern);
+  fill: var(--thread);
 }
 .visited .body {
-  fill: var(--paper);
+  fill: var(--ink);
 }
 .ring {
   fill: none;
-  stroke: var(--lantern);
+  stroke: var(--thread);
   stroke-opacity: 0.6;
 }
 .discoverable .body {
-  fill: var(--deep);
-  stroke: var(--tide);
+  fill: var(--card);
+  stroke: var(--haze);
   stroke-width: 1.5;
 }
 .discoverable:hover .body,
 .discoverable:focus-visible .body {
-  fill: var(--tide);
+  fill: var(--haze);
 }
 .place:focus-visible .hit {
-  stroke: var(--lantern);
+  stroke: var(--thread);
   stroke-width: 2;
 }
 
 .pulse {
-  fill: var(--lantern);
+  fill: var(--thread);
   transform-box: fill-box;
   transform-origin: center;
   animation: pulse 3.2s var(--ease) infinite;
@@ -99,25 +102,26 @@
 }
 
 .node {
-  color: var(--paper-3);
+  color: var(--ink-3);
 }
 .current .node {
-  color: var(--paper-2);
+  color: var(--ink-2);
 }
 
 .label,
 .labelCurrent {
-  fill: var(--paper);
-  font-family: var(--font-display);
+  fill: var(--ink);
+  font-family: var(--font-text);
   font-size: 17px;
   paint-order: stroke;
-  stroke: var(--void);
+  stroke: var(--ground);
   stroke-width: 4px;
   stroke-linejoin: round;
   pointer-events: none;
+  font-weight: 500;
 }
 .visited .label {
-  fill: var(--paper-2);
+  fill: var(--ink-2);
 }
 .labelCurrent {
   font-size: 24px;
@@ -191,7 +195,7 @@
   transition: opacity 0.6s var(--ease);
   background: radial-gradient(
     circle 14rem at var(--lx, 50%) var(--ly, 50%),
-    color-mix(in srgb, var(--lantern) 10%, transparent),
+    color-mix(in srgb, var(--thread) 10%, transparent),
     transparent 70%
   );
 }
@@ -199,7 +203,7 @@
 /* Arriving on a topic sends rings of light outwards. */
 .ripple {
   fill: none;
-  stroke: var(--lantern);
+  stroke: var(--thread);
   stroke-width: 1.5;
   vector-effect: non-scaling-stroke;
   transform-box: fill-box;
@@ -229,7 +233,7 @@
   opacity: 0.25;
 }
 .dust {
-  fill: var(--tide);
+  fill: var(--haze);
   opacity: 0.28;
   pointer-events: none;
 }
@@ -257,8 +261,8 @@
   padding: 6px 14px;
   border: 1px solid var(--line-2);
   border-radius: var(--radius-pill);
-  background: var(--deep);
-  color: var(--paper-2);
+  background: var(--card);
+  color: var(--ink-2);
   font: inherit;
   font-size: 12.5px;
   cursor: pointer;
@@ -268,8 +272,8 @@
 }
 .journey:hover,
 .resetView:hover {
-  border-color: var(--lantern);
-  color: var(--paper);
+  border-color: var(--thread);
+  color: var(--ink);
 }
 .resetView {
   display: none;
@@ -286,5 +290,11 @@
 
 /* A topic the reading panel is pointing at fills in like a hovered one. */
 .discoverable.lit .body {
-  fill: var(--tide);
+  fill: var(--haze);
+}
+
+@keyframes pull {
+  from {
+    stroke-dashoffset: 1;
+  }
 }

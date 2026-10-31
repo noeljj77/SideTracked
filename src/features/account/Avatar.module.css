@@ -5,7 +5,7 @@
   justify-content: center;
   border-radius: 50%;
   background: var(--raise);
-  color: var(--lantern);
+  color: var(--thread);
   font-weight: 600;
   object-fit: cover;
 }

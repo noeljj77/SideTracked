@@ -14,7 +14,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, State> {
     return (
       <main style={{ padding: 24 }}>
         <p>Something went sideways.</p>
-        <a href="/" style={{ color: 'var(--tide)' }}>
+        <a href="/" style={{ color: 'var(--haze)' }}>
           Back to the start
         </a>
       </main>

@@ -7,3 +7,7 @@ window.matchMedia ??= ((query: string) => ({
   addEventListener() {},
   removeEventListener() {},
 })) as unknown as typeof window.matchMedia
+
+// jsdom has no pointer capture, which dragging a graph node uses.
+Element.prototype.setPointerCapture ??= () => {}
+Element.prototype.releasePointerCapture ??= () => {}

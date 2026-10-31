@@ -4,13 +4,14 @@
   background: none;
   border: 0;
   border-bottom: 1px solid var(--line);
-  color: var(--paper);
+  color: var(--ink);
   font-family: var(--font-display);
+  letter-spacing: -0.02em;
   font-size: 24px;
   outline: none;
 }
 .input::placeholder {
-  color: var(--paper-3);
+  color: var(--ink-3);
 }
 
 .list {
@@ -26,7 +27,7 @@
   gap: 16px;
   padding: 10px 12px;
   border-radius: var(--radius-control);
-  color: var(--paper);
+  color: var(--ink);
   font-size: 14.5px;
   cursor: pointer;
 }
@@ -44,16 +45,16 @@
   white-space: nowrap;
   font-style: normal;
   font-size: 12.5px;
-  color: var(--paper-3);
+  color: var(--ink-3);
 }
 .active {
   background: var(--raise);
-  color: var(--lantern);
+  color: var(--thread);
 }
 
 .note {
   margin: 0;
   padding: 4px 20px 16px;
   font-size: 13px;
-  color: var(--paper-3);
+  color: var(--ink-3);
 }

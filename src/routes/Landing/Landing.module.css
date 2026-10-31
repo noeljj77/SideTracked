@@ -1,139 +1,364 @@
+/*
+ * One orchestrated moment on load: the headline rises, the thread draws across the board, and each note
+ * drops onto its pin as the thread reaches it. After that, only your own actions move anything.
+ */
 .page {
-  position: relative;
   min-height: 100%;
   display: flex;
   flex-direction: column;
+  gap: clamp(20px, 4vh, 48px);
+  padding: 22px clamp(20px, 5vw, 72px) 40px;
+  background: var(--grid), var(--ground);
+  overflow-x: clip;
+}
+
+.top {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 24px;
-  padding: 24px;
-  text-align: center;
-  /* Lets the drifting words sit behind the content (z-index -1) but in front of this background. */
-  isolation: isolate;
-  background:
-    radial-gradient(18rem circle at var(--mx, 50%) var(--my, 40%), rgba(240, 179, 91, 0.09), transparent 70%),
-    radial-gradient(40rem 24rem at 50% 35%, rgba(142, 156, 255, 0.12), transparent 70%),
-    var(--void);
-}
-
-/* Words are faint everywhere and brighten inside the lamplight around the pointer. */
-.words {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  overflow: hidden;
-  pointer-events: none;
-  -webkit-mask-image: radial-gradient(circle 15rem at var(--mx, 50%) var(--my, 40%), #000, rgba(0, 0, 0, 0.16));
-  mask-image: radial-gradient(circle 15rem at var(--mx, 50%) var(--my, 40%), #000, rgba(0, 0, 0, 0.16));
-}
-.words span {
-  position: absolute;
-  color: var(--tide);
-  font-family: var(--font-display);
-  font-style: italic;
-  white-space: nowrap;
-  animation: drift ease-in-out infinite alternate;
-}
-
-@keyframes drift {
-  from {
-    transform: translate(-14px, 8px);
-  }
-  to {
-    transform: translate(14px, -10px);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .words span {
-    animation: none;
-  }
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .brand {
   margin: 0;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.mark {
+  width: 34px;
+  height: 16px;
+  overflow: visible;
+}
+.mark path {
+  fill: none;
+  stroke: var(--thread);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  animation: draw 1s var(--ease) 0.2s backwards;
+}
+.mark circle {
+  fill: var(--ink);
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ---------- Hero ---------- */
+
+.hero {
+  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 22px;
 }
 
 .title {
   margin: 0;
   font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(40px, 7vw, 80px);
-  line-height: 0.98;
-  letter-spacing: -0.02em;
-  text-wrap: balance;
+  font-weight: 760;
+  font-size: clamp(50px, 8.2vw, 120px);
+  line-height: 0.92;
+  letter-spacing: -0.05em;
+}
+.line {
+  display: block;
+  overflow: hidden;
+  /* Room for descenders and the rising text's overshoot. */
+  padding: 0.04em 0.06em 0.1em 0;
+  margin-bottom: -0.1em;
+}
+.line > span {
+  display: block;
+  animation: rise 0.9s var(--ease) backwards;
+}
+.line:nth-child(2) > span {
+  animation-delay: 0.12s;
 }
 
-.title em {
-  color: var(--lantern);
+.lede {
+  margin: 0;
+  max-width: 34rem;
+  font-family: var(--font-text);
+  font-size: clamp(18px, 2vw, 22px);
+  line-height: 1.4;
+  color: var(--ink-2);
+  animation: fade 0.8s var(--ease) 0.45s backwards;
 }
 
 .form {
-  width: min(460px, 100%);
+  width: min(640px, 100%);
+  display: flex;
+  gap: 8px;
+  animation: fade 0.8s var(--ease) 0.55s backwards;
 }
-
 .input {
-  width: 100%;
-  padding: 12px 18px;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--line-2);
-  background: var(--deep);
-  color: var(--paper);
+  flex: 1;
+  min-width: 0;
+  padding: 15px 18px;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--ink);
   font: inherit;
-  transition: border-color 0.3s var(--ease);
-}
-
-.input::placeholder {
-  color: var(--paper-3);
-}
-
-.input:hover {
-  border-color: var(--lantern);
-}
-
-.seeds {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-  max-width: 520px;
-}
-
-.seed {
-  padding: 5px 12px;
-  border: 1px solid var(--line-2);
-  border-radius: var(--radius-pill);
-  color: var(--paper-2);
-  font-size: 12.5px;
-  text-decoration: none;
+  font-size: 18px;
   transition:
-    border-color 0.3s var(--ease),
-    color 0.3s var(--ease);
+    box-shadow 0.3s var(--ease),
+    transform 0.3s var(--ease);
 }
-
-.seed:hover {
-  border-color: var(--lantern);
-  color: var(--paper);
+.input::placeholder {
+  color: var(--ink-3);
 }
-
-.nav {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  display: flex;
-  gap: 8px;
+.input:focus {
+  outline: none;
+  box-shadow: 5px 5px 0 var(--thread);
+  transform: translate(-2px, -2px);
+}
+.go {
+  padding: 0 24px;
+  border: 2px solid var(--thread);
+  border-radius: 12px;
+  background: var(--thread);
+  color: var(--on-thread);
+  font: inherit;
+  font-size: 17px;
+  font-weight: 650;
+  cursor: pointer;
+  transition:
+    transform 0.25s var(--ease),
+    box-shadow 0.25s var(--ease);
+}
+.go:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.go:active {
+  transform: translate(0, 0);
+  box-shadow: none;
 }
 
 .note {
   margin: 0;
-  font-size: 13px;
-  color: var(--paper-3);
+  font-size: 14px;
+  color: var(--ink-3);
 }
 
-/* On a phone there are no margins to keep clear: the words would sit behind the search. */
-@media (max-width: 700px) {
-  .words {
+/* ---------- Board ---------- */
+
+.board {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.boardHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  animation: fade 0.8s var(--ease) 0.7s backwards;
+}
+.boardTitle {
+  margin: 0;
+  font-family: var(--font-text);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 22px;
+  color: var(--ink-2);
+}
+.shuffle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px 6px 10px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-pill);
+  background: var(--card);
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition:
+    border-color 0.3s var(--ease),
+    color 0.3s var(--ease);
+}
+.shuffle svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  transition: transform 0.6s var(--ease);
+}
+.shuffle circle {
+  fill: currentColor;
+  stroke: none;
+}
+.shuffle:hover {
+  border-color: var(--thread);
+  color: var(--ink);
+}
+.shuffle:hover svg {
+  transform: rotate(90deg);
+}
+/* Each shuffle flips the die further round. */
+.shuffle[data-round='1'] svg {
+  transform: rotate(180deg);
+}
+.shuffle[data-round='1']:hover svg {
+  transform: rotate(270deg);
+}
+
+.table {
+  position: relative;
+  aspect-ratio: 1000 / 250; /* the same shape as the thread's drawing, so nothing stretches */
+}
+.string {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.string path {
+  fill: none;
+  stroke: var(--thread);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  animation: draw 1.6s var(--ease) 0.7s backwards;
+}
+
+.noteCard {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 22px 16px 16px;
+  border: 1px solid var(--line-2);
+  border-radius: 3px;
+  background: var(--card);
+  box-shadow:
+    0 1px 0 var(--line),
+    0 14px 24px -14px rgba(var(--shade), 0.4);
+  color: var(--ink);
+  text-decoration: none;
+  transform: rotate(var(--tilt));
+  transform-origin: 50% 0;
+  transition:
+    transform 0.4s var(--ease),
+    box-shadow 0.4s var(--ease);
+  animation: drop 0.8s var(--ease) calc(1s + var(--i) * 0.22s) backwards;
+}
+.noteCard strong {
+  font-size: clamp(17px, 1.7vw, 22px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+.noteCard em {
+  font-family: var(--font-text);
+  font-size: clamp(14px, 1.3vw, 16px);
+  line-height: 1.3;
+  color: var(--ink-3);
+}
+/* Straighten and lift when you reach for one. */
+.noteCard:hover,
+.noteCard:focus-visible {
+  transform: rotate(0deg) translateY(-8px);
+  box-shadow:
+    0 1px 0 var(--line),
+    0 26px 30px -16px rgba(var(--shade), 0.45);
+  z-index: 2;
+}
+.noteCard:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 4px;
+}
+
+.pin {
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border-radius: 50%;
+  background: var(--thread);
+  box-shadow:
+    inset -2px -2px 0 rgba(var(--shade), 0.28),
+    0 2px 3px rgba(var(--shade), 0.3);
+  transition: transform 0.3s var(--ease);
+  animation: pop 0.5s var(--ease) calc(0.9s + var(--i) * 0.22s) backwards;
+}
+.noteCard:hover .pin,
+.noteCard:focus-visible .pin {
+  transform: scale(1.3);
+}
+
+/* ---------- Small screens: no room for a wandering thread, so the notes tile ---------- */
+
+@media (max-width: 760px) {
+  .form {
+    flex-direction: column;
+  }
+  .go {
+    padding: 14px 24px;
+  }
+  .table {
+    height: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px 14px;
+    padding-top: 10px;
+  }
+  .string {
     display: none;
+  }
+  .noteCard {
+    position: relative;
+    left: auto !important;
+    top: auto !important;
+    width: auto !important;
+    margin-left: 0 !important;
+  }
+  .noteCard:nth-of-type(5) {
+    display: none;
+  }
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(105%);
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+@keyframes drop {
+  from {
+    opacity: 0;
+    transform: translateY(-34px) rotate(calc(var(--tilt) * 4)) scale(1.06);
+  }
+}
+@keyframes pop {
+  from {
+    transform: scale(0);
   }
 }

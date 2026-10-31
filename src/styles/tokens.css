@@ -1,24 +1,48 @@
 :root {
-  --void: #0b0c10;
-  --deep: #12141a;
-  --raise: #1a1d25;
-  --paper: #ece8e1;
-  --paper-2: #a6a5ad;
-  --paper-3: #6e6f7a;
-  --lantern: #f0b35b;
-  --tide: #8e9cff;
-  --glass: rgba(18, 20, 26, 0.82);
-  --line:rgba(214, 220, 255, 0.08);
-  --line-2: rgba(214, 220, 255, 0.14);
+  /* Tracing paper, navy ink, one red thread. Colour means state: thread = where you are and where you have been. */
+  --ground: #e6ebf0;
+  --card: #f5f7fa;
+  --raise: #d9e0e7;
+  --ink: #14213d;
+  --ink-2: #3c4b66;
+  --ink-3: #55627a;
+  --thread: #d93025;
+  --haze: #3f6bc4;
+  /* The board everything sits on: graph paper, drawn as a field of dots. */
+  --grid: radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--ink) 15%, transparent) 1px, transparent 1.6px) 0 0 / 24px 24px;
+  --glass: rgba(245, 247, 250, 0.86);
+  --line: rgba(20, 33, 61, 0.1);
+  --line-2: rgba(20, 33, 61, 0.2);
+  /* Text on a thread-red surface, and the rgb of drop shadows. */
+  --on-thread: #f5f7fa;
+  --shade: 20, 33, 61;
 
-  --font-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
-  --font-body: 'Hanken Grotesk', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+  --font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Bricolage Grotesque', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-text: 'Newsreader', Georgia, 'Times New Roman', serif;
 
   --radius-control: 8px;
   --radius-card: 14px;
   --radius-pill: 999px;
 
   --ease: cubic-bezier(0.22, 0.8, 0.24, 1);
+  color-scheme: light;
+}
+
+/* The night board: the same paper, lit from behind. Set by index.html before first paint and by the theme toggle. */
+:root[data-theme='dark'] {
+  --ground: #0f1624;
+  --card: #182133;
+  --raise: #222d44;
+  --ink: #e8ecf4;
+  --ink-2: #b4bfd3;
+  --ink-3: #8f9cb5;
+  --thread: #ff6b5e;
+  --haze: #8fa9f0;
+  --glass: rgba(24, 33, 51, 0.86);
+  --line: rgba(232, 236, 244, 0.1);
+  --line-2: rgba(232, 236, 244, 0.2);
+  --on-thread: #1a0f12;
+  --shade: 0, 0, 0;
   color-scheme: dark;
 }

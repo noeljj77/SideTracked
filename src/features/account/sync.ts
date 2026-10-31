@@ -6,6 +6,7 @@ type Store = Pick<typeof useSavedTrails, 'getState' | 'setState' | 'subscribe'>
 /**
  * Keep the saved-trails store and the signed-in user's remote copy equal.
  * - First remote answer: merge this device's trails into the account, so nothing is lost on sign-in.
+ *   Unless they were last synced with another account: then they are replaced, so accounts never see each other's trails.
  * - After that the remote list is the truth: other devices' changes appear here.
  * - Local saves and deletes are pushed; `known` is what the remote already has, which stops echo writes.
  * Returns a function that stops syncing.
@@ -39,9 +40,15 @@ export function startSync(
     uid,
     (remote) => {
       known = new Map(remote.map((t) => [t.id, t]))
-      const trails = ready ? [...remote].sort((a, b) => b.savedAt - a.savedAt) : mergeTrails(store.getState().trails, remote)
+      // Trails left behind by a different account are not ours to upload: the new account starts from its own copy.
+      const { owner, trails: local } = store.getState()
+      const foreign = owner !== null && owner !== uid
+      const trails =
+        ready || foreign
+          ? [...remote].sort((a, b) => b.savedAt - a.savedAt)
+          : mergeTrails(local, remote)
       ready = true
-      store.setState({ trails })
+      store.setState({ trails, owner: uid })
     },
     onError,
   )

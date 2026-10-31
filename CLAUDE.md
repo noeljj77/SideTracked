@@ -2,32 +2,33 @@
 
 **One thing leads to another.** An interactive exploration app: the user starts with one topic and follows related topics outward through a living knowledge graph. The trail they leave is the product.
 
-Full visual spec: https://claude.ai/artifact/EWLXD5KKVqkhJjKH9dyd7E (approved 2026-10-31).
+The original dark "lamplight" look (spec: https://claude.ai/artifact/EWLXD5KKVqkhJjKH9dyd7E, 2026-10-31) was replaced on 2026-10-31 at the owner's request by the **red thread** look below. The graph behaviour further down is unchanged.
 
 ## Design direction
 
-Concept: *reading by lamplight in a very large library.* Dark, quiet surroundings; warm light marks where you've been and where you are, cool light marks what you could explore next.
+Concept: *the red thread.* Topics are notes and pins on a cool tracing-paper board; one red thread leads from each to the next. It is the single bold element: it draws across the landing board and is the trail inside the app.
 
-- **Must not** look like a Wikipedia clone, a generic dashboard, or a neon UI. Minimal chrome, strong hierarchy.
+- **Must not** look like a Wikipedia clone, a generic dashboard, or a template. Minimal chrome, strong hierarchy. Avoid the generated-page tells: tracked all-caps eyebrows, monospace data labels, "WORD — fragment" labels, one accented word in a headline, identical cards, "→" on buttons.
 - **Colour means state, never category.** Categories (person, place, idea, event, thing) are small glyphs.
-- **Dark-only** for now. All colours come from tokens in `src/styles/tokens.css`. No hard-coded hex in components.
+- **Light and dark** ("night board"): the dark values are `:root[data-theme="dark"]` in `src/styles/tokens.css`, set before first paint by a script in `index.html` (saved choice, else the system setting) and switched by `components/ThemeToggle.tsx` via `stores/themeStore.ts`. All colours come from tokens; text on red uses `--on-thread`, shadows use `rgba(var(--shade), a)`. No hard-coded hex in components (shadows may use the ink as rgba).
 
 | Token | Value | Use |
 |---|---|---|
-| `--void` | `#0B0C10` | Canvas |
-| `--deep` | `#12141A` | Panels, cards |
-| `--raise` | `#1A1D25` | Hover, inputs |
-| `--paper` | `#ECE8E1` | Text (never pure white) |
-| `--lantern` | `#F0B35B` | Only: current node, trail, primary CTA |
-| `--tide` | `#8E9CFF` | Unexplored nodes, ambient glow, links |
+| `--ground` | `#E6EBF0` | Canvas (cool tracing paper), with the `--grid` dot pattern |
+| `--card` | `#F5F7FA` | Panels, notes, inputs |
+| `--raise` | `#D9E0E7` | Hover |
+| `--ink`, `--ink-2`, `--ink-3` | `#14213D`, `#3C4B66`, `#55627A` | Text and pins (navy, never pure black) |
+| `--thread` | `#D93025` | Only: current node, trail, primary CTA |
+| `--haze` | `#3F6BC4` | Unexplored nodes, ambient glow, links |
 
-- **Type:** Instrument Serif (display, topic titles, graph labels) · Hanken Grotesk (UI, body) · JetBrains Mono (counters/metadata only).
-- **Motion:** ease `cubic-bezier(.22,.8,.24,1)`, 200–600 ms. New nodes bloom from their parent; everything else holds still. Honour `prefers-reduced-motion`.
-- **Nodes:** current = solid lantern disc + breathing halo · visited = paper disc + thin warm ring · discoverable = hollow tide ring (fills on hover) · distant = small dashed grey, unlabelled. Edges are always curved; trail edges warm and thicker. Hover dims everything not adjacent.
-- **Graph handling:** `features/graph/usePanZoom.ts` writes the zoom/pan transform straight to the layer `<g>` (no React re-render; `data-moved` on the svg shows "Reset view"; only `data-pan` elements start a pan). Nodes can be dragged (inner offset `<g>`, spring back in `GraphCanvas`, snaps back under reduced motion); a drag must never trigger a step. The lamplight is CSS variables on `.light`; the arrival ripple is keyed on the current topic.
+- **Type:** Bricolage Grotesque (headlines, UI, numbers; tight tracking, heavy weights for display) · Newsreader (reading text, graph labels, hooks; italic for asides). No monospace face.
+- **Motion:** ease `cubic-bezier(.22,.8,.24,1)`, 200–900 ms. One orchestrated moment on the landing page (headline rises, thread draws pin to pin, notes drop onto their pins); after that only the user's actions animate: hover straightens a note, Shuffle re-deals, a new step pulls the thread out, arrival sends a ripple. Honour `prefers-reduced-motion` (endless loops off; short one-shot motion still plays).
+- **Nodes:** current = solid thread-red disc + breathing halo · visited = ink pin + thin red ring · discoverable = hollow haze ring (fills on hover) · distant = small dashed grey, unlabelled. Edges are always curved; trail edges red and thicker, fading with age. Hover dims everything not adjacent.
+- **Landing:** `routes/Landing`. Left-aligned headline and search, then a board of five random starting topics (`seeds.ts`: 40 real Wikipedia titles with a one-line hook, `deal()` picks without repeats; a fresh hand every visit, Shuffle re-deals) pinned along a red thread. Under 760px the notes tile in two columns and the thread is hidden.
+- **Graph handling:** `features/graph/usePanZoom.ts` writes the zoom/pan transform straight to the layer `<g>` (no React re-render; `data-moved` on the svg shows "Reset view"; only `data-pan` elements start a pan). Nodes can be dragged (inner offset `<g>`, spring back in `GraphCanvas`, snaps back under reduced motion); a drag must never trigger a step. The cursor glow is CSS variables on `.light`; the arrival ripple is keyed on the current topic.
 - **Minimap and panel link:** `features/graph/Minimap.tsx` (geometry in `miniFit.ts`) draws the journey plus a viewport box that follows the camera through `usePanZoom`'s `watch` listeners (CSS only, no re-render); click/drag calls `goTo`. Hidden under 900px. `uiStore.focusId` lets the reading panel light up a node on the graph. Reading-panel text is sentence case: no tracked all-caps eyebrows. `vite.config.ts` pre-bundles `d3-force`, because only the lazy trail map imports it and the dev server would otherwise reload the page on first open.
 - **Trail map:** `M` / the Map pill opens `features/graph/TrailMap.tsx` (lazy-loaded overlay), a constellation of the whole trail from `layoutTrailMap` in `mapLayout.ts` (deterministic: wander seeded by each title, d3 collide only). File names must differ by more than case from components (`TrailMap.tsx` vs `trailMap.ts` broke the Windows build).
-- **Layouts:** Landing = one centred search, seed topics, recent trails, faint drifting graph behind. Workspace = full-bleed graph, floating glass reading panel (right), trail thread (bottom), chrome fades after 3 s idle.
+- **Workspace layout:** full-bleed graph, floating glass reading panel (right), trail thread (bottom), minimap (bottom left), chrome fades after 3 s idle.
 - **Responsive:** ≥1200 desktop as above · 768–1199 panel becomes 2-height bottom sheet · <768 sheet holds the trail, max 5 neighbours, tap = preview, second tap = step. Touch targets ≥ 44 px. Provide a keyboard/screen-reader list view of the graph.
 
 ## Tech stack (approved)
@@ -111,7 +112,7 @@ e2e/              Playwright specs
 - Config comes from `VITE_FIREBASE_*` in `.env.local` (gitignored; template in `.env.example`) and in Vercel's project settings. These identify the project and are not secrets; **security comes from `firestore.rules`**. Never commit service-account keys or admin credentials.
 - Only `src/api/firebase/firebase.ts` imports the Firebase SDK. Everything else goes through `features/account/account.ts` and the `TrailsRepo` type in `domain/trails.ts`, so tests use a fake repo and never touch Firebase.
 - `features/account/sync.ts` merges this device's trails into the account on first sign-in, then treats the account as the truth. It pushes local saves and deletes, and uses a `known` map to avoid echo writes. Keep its unit tests passing when changing it.
-- Signing out keeps trails on the device. Validate every Firestore document with zod before use.
+- Signing out keeps trails on the device, and `savedTrailsStore.owner` records which account they were synced with: signing in as a different account replaces them with that account's own copy instead of uploading them. Validate every Firestore document with zod before use.
 - Changing `firestore.rules` is a deployment step: it is pasted into Firebase console (Firestore → Rules) or deployed with the Firebase CLI; pushing to git does not update it.
 - `npm audit` flags `@grpc/grpc-js` via `firebase`. That is the Node server transport, not used by the browser SDK. Do not run `npm audit fix --force` (it downgrades Firebase to 2022).
 
@@ -139,7 +140,7 @@ npm run test:e2e    # playwright
 - `domain/` logic (ranking, normalisation, trail operations, migrations) needs unit tests.
 - API clients and routes are tested with `vi.stubGlobal('fetch', …)` — **tests never hit live Wikipedia**. (MSW is not installed; add it only if stubs get unwieldy.)
 - Components: test behaviour (what the user sees and does), not implementation details.
-- E2E (`e2e/`, Playwright) covers: search → open topic → step to neighbour → rewind via trail → reload keeps trail, plus command bar, trails overlay, and error states. It mocks Wikipedia in `e2e/wikipedia.ts` (never the live site), starts its own dev server on port 4173, and drives the installed Chrome (`channel: 'chrome'`); on a machine without Chrome run `npx playwright install chrome`. Add new e2e specs when adding a user-visible flow.
+- E2E (`e2e/`, Playwright, runs against a production build served by `vite preview`) covers: search → open topic → step to neighbour → rewind via trail → reload keeps trail, plus command bar, trails overlay, and error states. It mocks Wikipedia in `e2e/wikipedia.ts` (never the live site), builds and serves the app itself on port 4173, and drives the installed Chrome (`channel: 'chrome'`); on a machine without Chrome run `npx playwright install chrome`. Add new e2e specs when adding a user-visible flow.
 - A milestone is complete only when `lint`, `typecheck`, `test`, `build` and (for user-visible changes) `test:e2e` all pass.
 
 ## Git workflow

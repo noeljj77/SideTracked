@@ -18,7 +18,8 @@
 .title {
   margin: 0;
   font-family: var(--font-display);
-  font-weight: 400;
+  letter-spacing: -0.02em;
+  font-weight: 650;
   font-size: 30px;
   line-height: 1.05;
 }
@@ -28,7 +29,7 @@
   align-items: center;
   gap: 6px;
   font-size: 12.5px;
-  color: var(--paper-3);
+  color: var(--ink-3);
 }
 
 .name {
@@ -38,29 +39,31 @@
   min-width: 0;
 }
 .name svg {
-  color: var(--paper-3);
+  color: var(--ink-3);
 }
 
 .summary {
+  font-family: var(--font-text);
   margin: 0;
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--paper-2);
+  font-size: 16.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  font-weight: 400;
 }
 
 .muted {
   margin: 0;
   font-size: 13px;
-  color: var(--paper-3);
+  color: var(--ink-3);
 }
 
 .kicker {
   margin: 10px 0 0;
-  font-family: var(--font-display);
+  font-family: var(--font-text);
   font-style: italic;
   font-weight: 400;
   font-size: 19px;
-  color: var(--paper-2);
+  color: var(--ink-2);
 }
 
 .list {
@@ -79,7 +82,7 @@
   background: none;
   border: 0;
   border-top: 1px solid var(--line);
-  color: var(--paper);
+  color: var(--ink);
   font: inherit;
   font-size: 14px;
   text-align: left;
@@ -87,7 +90,7 @@
   transition: color 0.3s var(--ease);
 }
 .row:hover {
-  color: var(--lantern);
+  color: var(--thread);
 }
 
 /* Why this topic is offered. The dot speaks the graph's language: filled, ringed or dashed. */
@@ -96,25 +99,25 @@
   align-items: center;
   gap: 7px;
   font-size: 12px;
-  color: var(--paper-3);
+  color: var(--ink-3);
 }
 .why i {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  border: 1.5px solid var(--tide);
+  border: 1.5px solid var(--haze);
 }
 .why .both {
-  background: var(--tide);
+  background: var(--haze);
 }
 .why .tangent {
   border-style: dashed;
-  border-color: var(--paper-3);
+  border-color: var(--ink-3);
 }
 
 .error {
   font-size: 13px;
-  color: var(--paper-2);
+  color: var(--ink-2);
 }
 .error p {
   margin: 0 0 8px;
@@ -124,7 +127,7 @@
   border-radius: var(--radius-control);
   border: 1px solid var(--line-2);
   background: var(--raise);
-  color: var(--paper);
+  color: var(--ink);
   font: inherit;
   cursor: pointer;
 }
@@ -133,10 +136,10 @@
   margin: auto 0 0;
   padding-top: 8px;
   font-size: 12px;
-  color: var(--paper-3);
+  color: var(--ink-3);
 }
 .source a {
-  color: var(--tide);
+  color: var(--haze);
 }
 
 @media (max-width: 899px) {

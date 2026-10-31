@@ -364,6 +364,7 @@ export const GraphCanvas = memo(function GraphCanvas({
               <path
                 key={`out:${edgeKey(e)}`}
                 d={curve(a, b)}
+                pathLength={1}
                 className={`${styles.edge} ${styles.edgeOut} ${e.kind === 'trail' ? styles.trail : ''}`}
               />
             )
@@ -380,6 +381,7 @@ export const GraphCanvas = memo(function GraphCanvas({
               <path
                 key={edgeKey(e)}
                 d={d}
+                pathLength={1}
                 // CSS `d` lets Chrome animate the curve; other browsers snap via the attribute above.
                 style={
                   {
