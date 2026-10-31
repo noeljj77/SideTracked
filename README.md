@@ -108,4 +108,4 @@ Article text comes from Wikipedia and is available under [CC BY-SA 4.0](https://
 
 ## For contributors
 
-[CLAUDE.md](CLAUDE.md) documents the design direction, conventions, architecture and git workflow in detail, and is the best place to start before making changes.
+[CONTRIBUTING.md](CONTRIBUTING.md) documents the design direction, conventions, architecture and git workflow in detail, and is the best place to start before making changes.

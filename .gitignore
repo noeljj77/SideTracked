@@ -25,6 +25,3 @@ npm-debug.log*
 .idea/
 .DS_Store
 Thumbs.db
-
-# local Claude settings
-.claude/settings.local.json
