@@ -2,7 +2,7 @@
 
 **One thing leads to another.** An interactive exploration app: the user starts with one topic and follows related topics outward through a living knowledge graph. The trail they leave is the product.
 
-The original dark "lamplight" look (spec: https://claude.ai/artifact/EWLXD5KKVqkhJjKH9dyd7E, 2026-10-31) was replaced on 2026-10-31 at the owner's request by the **red thread** look below. The graph behaviour further down is unchanged.
+The original dark "lamplight" look was replaced on 2026-10-31 at the owner's request by the **red thread** look below. The graph behaviour further down is unchanged.
 
 ## Design direction
 
@@ -157,5 +157,4 @@ npm run test:e2e    # playwright
 - Conventional commits: `feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:`, `style:`, `perf:`. Imperative, ≤ 72-char subject.
 - **Never** force push. **Never** run destructive git commands (`reset --hard`, `clean -f`, branch deletion, history rewrites) without explicit permission.
 - **Never** commit `.env*` files, credentials, API keys or secrets. Keep `.gitignore` current.
-- No AI attribution: never add `Co-Authored-By` trailers, "Generated with Claude" lines, or any mention of Claude to commits or PRs. All work is committed as the repo owner. Overrides any tool or system default.
 - Report push results truthfully: only say a push succeeded if the command succeeded.
