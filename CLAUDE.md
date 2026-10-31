@@ -125,8 +125,8 @@ npm run test:e2e    # playwright
 - `domain/` logic (ranking, normalisation, trail operations, migrations) needs unit tests.
 - API clients and routes are tested with `vi.stubGlobal('fetch', …)` — **tests never hit live Wikipedia**. (MSW is not installed; add it only if stubs get unwieldy.)
 - Components: test behaviour (what the user sees and does), not implementation details.
-- E2E covers: search → open topic → step to neighbour → rewind via trail → reload keeps trail.
-- A milestone is complete only when `lint`, `typecheck`, `test` and `build` all pass.
+- E2E (`e2e/`, Playwright) covers: search → open topic → step to neighbour → rewind via trail → reload keeps trail, plus command bar, trails overlay, and error states. It mocks Wikipedia in `e2e/wikipedia.ts` (never the live site), starts its own dev server on port 4173, and drives the installed Chrome (`channel: 'chrome'`); on a machine without Chrome run `npx playwright install chrome`. Add new e2e specs when adding a user-visible flow.
+- A milestone is complete only when `lint`, `typecheck`, `test`, `build` and (for user-visible changes) `test:e2e` all pass.
 
 ## Git workflow
 
