@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query'
-import { fetchRelated, fetchTopic } from './client'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { fetchRelated, fetchTopic, searchTitles } from './client'
 
 const HOUR = 60 * 60 * 1000
 
@@ -17,4 +17,13 @@ export const useRelated = (id: string) =>
     queryFn: ({ signal }) => fetchRelated(id, signal),
     staleTime: HOUR,
     enabled: !!id,
+  })
+
+export const useSearch = (q: string) =>
+  useQuery({
+    queryKey: ['search', q],
+    queryFn: ({ signal }) => searchTitles(q, signal),
+    staleTime: HOUR,
+    enabled: q.length >= 2,
+    placeholderData: keepPreviousData,
   })

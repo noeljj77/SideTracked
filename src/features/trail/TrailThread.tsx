@@ -1,3 +1,4 @@
+import { hopLabel } from './hops'
 import styles from './TrailThread.module.css'
 
 type Props = { steps: string[]; onRewind: (index: number) => void }
@@ -20,7 +21,7 @@ export function TrailThread({ steps, onRewind }: Props) {
           </span>
         ),
       )}
-      <span className={styles.depth}>{last} HOPS</span>
+      <span className={styles.depth}>{hopLabel(steps.length)}</span>
     </nav>
   )
 }

@@ -19,6 +19,10 @@ const searchSchema = z.object({
   query: z.object({ search: z.array(z.object({ title: z.string() })) }).optional(),
 })
 
+const titleSearchSchema = z.object({
+  pages: z.array(z.object({ title: z.string(), description: z.string().nullish() })),
+})
+
 async function getJson(url: string, signal?: AbortSignal): Promise<unknown> {
   let res: Response
   try {
@@ -73,4 +77,19 @@ export async function fetchRelated(id: string, signal?: AbortSignal): Promise<Ne
     (data.query?.search ?? []).map((r) => r.title),
     id,
   )
+}
+
+export type TitleHit = { title: string; description?: string }
+
+export async function searchTitles(q: string, signal?: AbortSignal): Promise<TitleHit[]> {
+  const params = new URLSearchParams({ q, limit: '6' })
+  const data = parse(
+    titleSearchSchema,
+    await getJson(`https://en.wikipedia.org/w/rest.php/v1/search/title?${params}`, signal),
+  )
+  return data.pages.map((p) => ({ title: p.title, description: p.description ?? undefined }))
+}
+
+export async function fetchRandomTitle(signal?: AbortSignal): Promise<string> {
+  return parse(summarySchema, await getJson(`${REST}/page/random/summary`, signal)).title
 }

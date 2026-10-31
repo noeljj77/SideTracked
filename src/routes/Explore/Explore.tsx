@@ -4,8 +4,10 @@ import { useRelated, useTopic } from '@/api/wikipedia/queries'
 import { GraphCanvas } from '@/features/graph/GraphCanvas'
 import { ReadingPanel } from '@/features/reader/ReadingPanel'
 import { TrailThread } from '@/features/trail/TrailThread'
+import { Pill } from '@/components/Pill'
 import { useIdle } from '@/hooks/useIdle'
 import { useTrail } from '@/stores/trailStore'
+import { useUi } from '@/stores/uiStore'
 import styles from './Explore.module.css'
 
 const EMPTY: never[] = []
@@ -16,6 +18,7 @@ export function Explore() {
   const steps = useTrail((s) => s.steps)
   const visit = useTrail((s) => s.visit)
   const rewind = useTrail((s) => s.rewind)
+  const open = useUi((s) => s.open)
   const idle = useIdle(4000)
   const topic = useTopic(id)
   const related = useRelated(id)
@@ -35,9 +38,15 @@ export function Explore() {
         neighbors={related.data ?? EMPTY}
         onSelect={go}
       />
-      <Link to="/" className={styles.brand}>
-        SideTracked
-      </Link>
+      <div className={styles.bar}>
+        <Link to="/" className={styles.brand}>
+          SideTracked
+        </Link>
+        <Pill onClick={() => open('command')}>
+          Search <kbd>Ctrl K</kbd>
+        </Pill>
+        <Pill onClick={() => open('trails')}>Trails</Pill>
+      </div>
       <ReadingPanel id={id} topic={topic} related={related} onSelect={go} />
       <TrailThread
         steps={steps}

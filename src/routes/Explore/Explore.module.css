@@ -7,10 +7,16 @@
     var(--void);
 }
 
-.brand {
+.bar {
   position: absolute;
-  top: 18px;
+  top: 12px;
   left: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand {
   color: var(--paper-2);
   text-decoration: none;
   font-weight: 600;

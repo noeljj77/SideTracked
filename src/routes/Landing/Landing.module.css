@@ -1,4 +1,5 @@
 .page {
+  position: relative;
   min-height: 100%;
   display: flex;
   flex-direction: column;
@@ -78,4 +79,18 @@
 .seed:hover {
   border-color: var(--lantern);
   color: var(--paper);
+}
+
+.nav {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.note {
+  margin: 0;
+  font-size: 13px;
+  color: var(--paper-3);
 }

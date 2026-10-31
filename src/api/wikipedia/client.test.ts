@@ -1,4 +1,4 @@
-import { fetchRelated, fetchTopic } from './client'
+import { fetchRandomTitle, fetchRelated, fetchTopic, searchTitles } from './client'
 
 const reply = (body: unknown, status = 200) =>
   vi.fn(async () => new Response(JSON.stringify(body), { status }))
@@ -34,4 +34,20 @@ it('ranks related results and tolerates an empty result', async () => {
   expect(await fetchRelated('Octopus')).toEqual([{ id: 'Squid', strength: 'strong' }])
   vi.stubGlobal('fetch', reply({ batchcomplete: '' }))
   expect(await fetchRelated('Octopus')).toEqual([])
+})
+
+it('maps title search hits and tolerates a missing description', async () => {
+  vi.stubGlobal(
+    'fetch',
+    reply({ pages: [{ title: 'Squid', description: null }, { title: 'Squid game', description: 'TV series' }] }),
+  )
+  expect(await searchTitles('squ')).toEqual([
+    { title: 'Squid', description: undefined },
+    { title: 'Squid game', description: 'TV series' },
+  ])
+})
+
+it('returns the title of a random article', async () => {
+  vi.stubGlobal('fetch', reply(summary))
+  expect(await fetchRandomTitle()).toBe('Octopus')
 })

@@ -7,6 +7,8 @@ type TrailState = {
   visit: (id: string) => void
   /** Cut the trail back so index is the last step. */
   rewind: (index: number) => void
+  /** Replace the whole trail (open a saved one, or clear with []). */
+  set: (steps: string[]) => void
 }
 
 export const useTrail = create<TrailState>()(
@@ -20,6 +22,7 @@ export const useTrail = create<TrailState>()(
           return { steps: [...s.steps, id] }
         }),
       rewind: (index) => set((s) => ({ steps: s.steps.slice(0, index + 1) })),
+      set: (steps) => set({ steps }),
     }),
     { name: 'sidetracked-trail', version: 1 },
   ),
