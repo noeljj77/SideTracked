@@ -76,11 +76,24 @@ export async function mockWikipedia(page: Page) {
       return route.fulfill(json({ query: { pages } }))
     }
 
+    // Links walked as a generator: every linked article, with a `links` entry when it links back to `pltitles`.
+    if (url.searchParams.get('generator') === 'links') {
+      const self = url.searchParams.get('titles') ?? ''
+      const pages = (LINKS[self] ?? []).map((title) => ({
+        title,
+        length: 100_000,
+        ...((LINKS[title] ?? []).includes(self) ? { links: [{ title: self }] } : {}),
+      }))
+      return route.fulfill(json({ query: { pages } }))
+    }
+
     // Outgoing links, optionally only those pointing at `pltitles` (formatversion 2 shape).
     if (url.pathname.endsWith('/api.php') && url.searchParams.get('prop') === 'links') {
       const only = url.searchParams.get('pltitles')
       const pages = (url.searchParams.get('titles') ?? '').split('|').map((title) => {
-        const links = (LINKS[title] ?? []).filter((t) => !only || t === only).map((t) => ({ title: t }))
+        const links = (LINKS[title] ?? [])
+          .filter((t) => !only || t === only)
+          .map((t) => ({ title: t }))
         return links.length ? { title, links } : { title }
       })
       return route.fulfill(json({ query: { pages } }))

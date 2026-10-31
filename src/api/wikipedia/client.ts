@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { rankNeighbors } from '@/domain/ranking'
+import { rankNeighbors, type Mutual } from '@/domain/ranking'
 import type { Neighbor, Topic } from '@/domain/types'
 import { getJson as http, parse } from '../http'
 
@@ -40,34 +40,107 @@ export async function fetchTopic(id: string, signal?: AbortSignal): Promise<Topi
   }
 }
 
-export async function fetchRelated(id: string, signal?: AbortSignal): Promise<Neighbor[]> {
+/** Similar articles by text, best first. */
+async function fetchSimilar(id: string, signal?: AbortSignal): Promise<string[]> {
   const params = new URLSearchParams({
     action: 'query',
     list: 'search',
     srsearch: `morelike:${id}`,
     srnamespace: '0',
-    srlimit: '9',
+    srlimit: '50',
     format: 'json',
     origin: '*',
   })
   const data = parse(searchSchema, await getJson(`${ACTION}?${params}`, signal))
-  return rankNeighbors(
-    (data.query?.search ?? []).map((r) => r.title),
-    id,
-  )
+  return (data.query?.search ?? []).map((r) => r.title)
+}
+
+/**
+ * Combine text similarity with links that run both ways. The links half is optional: if it fails
+ * the topic still gets neighbours from similarity alone.
+ */
+export async function fetchRelated(id: string, signal?: AbortSignal): Promise<Neighbor[]> {
+  const [similar, mutual] = await Promise.all([
+    fetchSimilar(id, signal),
+    fetchMutual(id, signal).catch((err: unknown) => {
+      if (signal?.aborted) throw err
+      return []
+    }),
+  ])
+  return rankNeighbors(similar, mutual, id)
 }
 
 const linksSchema = z.object({
   continue: z.record(z.string(), z.string()).optional(),
   query: z
     .object({
-      pages: z.array(z.object({ title: z.string(), links: z.array(z.object({ title: z.string() })).optional() })),
+      pages: z.array(
+        z.object({ title: z.string(), links: z.array(z.object({ title: z.string() })).optional() }),
+      ),
     })
     .optional(),
 })
 
 const linksUrl = (params: Record<string, string>) =>
   `${ACTION}?${new URLSearchParams({ action: 'query', format: 'json', formatversion: '2', origin: '*', ...params })}`
+
+const mutualSchema = z.object({
+  continue: z.record(z.string(), z.string()).optional(),
+  query: z
+    .object({
+      pages: z.array(
+        z.object({
+          title: z.string(),
+          length: z.number().optional(),
+          links: z.array(z.object({ title: z.string() })).optional(),
+        }),
+      ),
+    })
+    .optional(),
+})
+
+// shortcut: only the first 1000 links (alphabetical) are checked to keep a step under ~2 s; upgrade if tangents of huge articles skew A to M.
+const MUTUAL_PAGES = 2
+
+/**
+ * Articles this one links to that link straight back, with their size. One generator request walks
+ * the outgoing links and keeps, for each, only a link to `id`, so an article costs 1 or 2 calls.
+ */
+export async function fetchMutual(id: string, signal?: AbortSignal): Promise<Mutual[]> {
+  const found = new Map<string, Mutual & { back: boolean }>()
+  let more: Record<string, string> = {}
+  for (let i = 0; i < MUTUAL_PAGES; i++) {
+    const data = parse(
+      mutualSchema,
+      await getJson(
+        linksUrl({
+          generator: 'links',
+          titles: id,
+          gplnamespace: '0',
+          gpllimit: 'max',
+          prop: 'links|info',
+          pltitles: id,
+          pllimit: 'max',
+          ...more,
+        }),
+        signal,
+      ),
+    )
+    for (const page of data.query?.pages ?? []) {
+      const prev = found.get(page.title)
+      found.set(page.title, {
+        id: page.title,
+        length: page.length ?? prev?.length ?? 0,
+        back: !!page.links?.length || !!prev?.back,
+      })
+    }
+    if (!data.continue) break
+    more = data.continue
+  }
+  return [...found.values()]
+    .filter((m) => m.back)
+    .map(({ id: title, length }) => ({ id: title, length }))
+}
 
 const LINK_PAGES = 8 // 500 links per request: enough for the biggest articles
 const BATCH = 50 // titles per request, the API's limit
@@ -81,7 +154,14 @@ export async function fetchLinks(id: string, signal?: AbortSignal): Promise<stri
     const data = parse(
       linksSchema,
       await getJson(
-        linksUrl({ prop: 'links', titles: id, pllimit: 'max', plnamespace: '0', redirects: '1', ...more }),
+        linksUrl({
+          prop: 'links',
+          titles: id,
+          pllimit: 'max',
+          plnamespace: '0',
+          redirects: '1',
+          ...more,
+        }),
         signal,
       ),
     )

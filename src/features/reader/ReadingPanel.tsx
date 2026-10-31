@@ -2,8 +2,10 @@ import type { UseQueryResult } from '@tanstack/react-query'
 import { describeError } from '@/api/wikipedia/errors'
 import { KIND_LABEL, KindGlyph } from '@/components/KindGlyph'
 import type { Kind } from '@/domain/kind'
-import type { Neighbor, Topic } from '@/domain/types'
+import type { Neighbor, Topic, Why } from '@/domain/types'
 import styles from './ReadingPanel.module.css'
+
+const WHY: Record<Why, string> = { both: 'closely linked', similar: 'similar', tangent: 'tangent' }
 
 type Props = {
   id: string
@@ -59,7 +61,7 @@ export function ReadingPanel({ id, topic, related, kinds, onSelect }: Props) {
                 {kinds[n.id] && <KindGlyph kind={kinds[n.id]!} size={12} />}
                 {n.id}
               </span>
-              <em>{n.strength}</em>
+              <em>{WHY[n.why]}</em>
             </button>
           </li>
         ))}

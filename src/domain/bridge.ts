@@ -7,7 +7,7 @@ export type Bridge = { from: string; to: string; direct: boolean; via: string[] 
 
 // Citation plumbing and catch-all pages that link everywhere and say nothing about a topic.
 const BOILERPLATE =
-  /\((identifier|disambiguation)\)$|^(Wayback Machine|The Guardian|The New York Times|Cambridge University Press|Oxford University Press|Routledge|Springer|Wiley)$|^List of /
+  /\((identifier|disambiguation)\)$|^(Wayback Machine|The Guardian|The New York Times|Cambridge University Press|Oxford University Press|Routledge|Springer|Wiley)$|^(List|Outline) of /
 const YEAR = /^\d{1,4}( BC)?$/
 
 /** True for links that connect nearly every article and so make poor stepping stones. */

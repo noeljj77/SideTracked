@@ -1,4 +1,12 @@
-import { fetchLinkers, fetchLinks, fetchRandomTitle, fetchRelated, fetchTopic, searchTitles } from './client'
+import {
+  fetchLinkers,
+  fetchLinks,
+  fetchMutual,
+  fetchRandomTitle,
+  fetchRelated,
+  fetchTopic,
+  searchTitles,
+} from './client'
 
 const reply = (body: unknown, status = 200) =>
   vi.fn(async () => new Response(JSON.stringify(body), { status }))
@@ -30,16 +38,68 @@ it('maps a network failure to Network', async () => {
 })
 
 it('ranks related results and tolerates an empty result', async () => {
+  // The same reply answers the links lookup too, which it cannot satisfy: similarity alone is used.
   vi.stubGlobal('fetch', reply({ query: { search: [{ title: 'Squid' }] } }))
-  expect(await fetchRelated('Octopus')).toEqual([{ id: 'Squid', strength: 'strong' }])
+  expect(await fetchRelated('Octopus')).toEqual([
+    { id: 'Squid', strength: 'strong', why: 'similar' },
+  ])
   vi.stubGlobal('fetch', reply({ batchcomplete: '' }))
   expect(await fetchRelated('Octopus')).toEqual([])
+})
+
+it('keeps only articles that link back, across continuation, with their size', async () => {
+  const page1 = {
+    continue: { gplcontinue: 'x' },
+    query: {
+      pages: [
+        { title: 'Squid', length: 5000, links: [{ title: 'Octopus' }] },
+        { title: 'Ink', length: 900 },
+      ],
+    },
+  }
+  const page2 = {
+    query: { pages: [{ title: 'Kraken', length: 7000, links: [{ title: 'Octopus' }] }] },
+  }
+  vi.stubGlobal(
+    'fetch',
+    vi
+      .fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify(page1)))
+      .mockResolvedValueOnce(new Response(JSON.stringify(page2))),
+  )
+  expect(await fetchMutual('Octopus')).toEqual([
+    { id: 'Squid', length: 5000 },
+    { id: 'Kraken', length: 7000 },
+  ])
+})
+
+it('offers a linked-both-ways tangent next to the similar topics', async () => {
+  const search = { query: { search: [{ title: 'Squid' }] } }
+  const mutual = {
+    query: { pages: [{ title: 'Kraken', length: 120000, links: [{ title: 'Octopus' }] }] },
+  }
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(
+      async (url: string) =>
+        new Response(JSON.stringify(url.includes('generator=links') ? mutual : search)),
+    ),
+  )
+  expect(await fetchRelated('Octopus')).toEqual([
+    { id: 'Squid', strength: 'strong', why: 'similar' },
+    { id: 'Kraken', strength: 'surprising', why: 'tangent' },
+  ])
 })
 
 it('maps title search hits and tolerates a missing description', async () => {
   vi.stubGlobal(
     'fetch',
-    reply({ pages: [{ title: 'Squid', description: null }, { title: 'Squid game', description: 'TV series' }] }),
+    reply({
+      pages: [
+        { title: 'Squid', description: null },
+        { title: 'Squid game', description: 'TV series' },
+      ],
+    }),
   )
   expect(await searchTitles('squ')).toEqual([
     { title: 'Squid', description: undefined },
@@ -64,7 +124,9 @@ it('collects links across continuation pages', async () => {
       ),
     )
     .mockResolvedValueOnce(
-      new Response(JSON.stringify({ query: { pages: [{ title: 'Octopus', links: [{ title: 'Ink' }] }] } })),
+      new Response(
+        JSON.stringify({ query: { pages: [{ title: 'Octopus', links: [{ title: 'Ink' }] }] } }),
+      ),
     )
   vi.stubGlobal('fetch', fetchMock)
   expect(await fetchLinks('Octopus')).toEqual(['Squid', 'Ink'])
@@ -75,12 +137,18 @@ it('asks which articles link to a target in batches of 50 and keeps the given or
   const titles = Array.from({ length: 120 }, (_, i) => `T${i}`)
   const fetchMock = vi.fn(async (url: string) => {
     const asked = new URL(url).searchParams.get('titles')?.split('|') ?? []
-    const pages = asked.map((title) => ({ title, ...(title === 'T7' || title === 'T100' ? { links: [{ title: 'Goal' }] } : {}) }))
+    const pages = asked.map((title) => ({
+      title,
+      ...(title === 'T7' || title === 'T100' ? { links: [{ title: 'Goal' }] } : {}),
+    }))
     return new Response(JSON.stringify({ query: { pages } }))
   })
   vi.stubGlobal('fetch', fetchMock)
   const progress: number[] = []
-  expect(await fetchLinkers(titles, 'Goal', undefined, (n) => progress.push(n))).toEqual(['T7', 'T100'])
+  expect(await fetchLinkers(titles, 'Goal', undefined, (n) => progress.push(n))).toEqual([
+    'T7',
+    'T100',
+  ])
   expect(fetchMock).toHaveBeenCalledTimes(3)
   expect(Math.max(...progress)).toBe(120)
 })

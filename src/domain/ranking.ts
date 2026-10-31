@@ -1,11 +1,53 @@
+import { isBoilerplate } from './bridge'
 import type { Neighbor } from './types'
 
-/** Search results arrive best-first: top 3 are strong, next 3 related, the rest surprising. */
-export function rankNeighbors(titles: string[], self: string): Neighbor[] {
+/** An article that links to the current topic and is linked from it, with its size in characters. */
+export type Mutual = { id: string; length: number }
+
+const SIMILAR = 50 // how deep into the similarity list we look
+const CORE = 6
+const TANGENTS = 3
+const STRONG_RANK = 12 // top similar results that are also linked both ways count as strong
+
+/**
+ * Tangents should be notable without being generic: a mid-large article beats a country or a stub.
+ * shortcut: size is a rough stand-in for fame, upgrade to page views if tangents feel random.
+ */
+const notable = (length: number) =>
+  Math.exp(-((Math.log10(Math.max(length, 1)) - Math.log10(120_000)) ** 2) / (2 * 0.35 ** 2))
+
+/**
+ * Combine two signals. `similar` is text similarity, best first. `mutual` are articles that link to the
+ * topic and are linked from it, which editors only do when the two really belong together.
+ * Similar and mutual is the strongest sign. Mutual alone, ranked by `notable`, supplies the surprising tangents.
+ * With no `mutual` (the lookup failed) the result falls back to similarity order alone.
+ */
+export function rankNeighbors(similar: string[], mutual: Mutual[], self: string): Neighbor[] {
   const seen = new Set([self])
-  const unique = titles.filter((t) => !seen.has(t) && !!seen.add(t))
-  return unique.map((id, i) => ({
-    id,
-    strength: i < 3 ? 'strong' : i < 6 ? 'related' : 'surprising',
-  }))
+  const ranked = similar.filter((t) => !seen.has(t) && !!seen.add(t))
+  const linked = new Map(mutual.filter((m) => !isBoilerplate(m.id)).map((m) => [m.id, m.length]))
+
+  const core = ranked
+    .map((id, i) => ({
+      id,
+      i,
+      both: linked.has(id),
+      score: 0.6 * (1 - i / SIMILAR) + (linked.has(id) ? 0.4 : 0),
+    }))
+    .sort((a, b) => b.score - a.score || a.i - b.i)
+    .slice(0, CORE)
+    .map(({ id, i, both }): Neighbor => ({
+      id,
+      strength: i < 3 || (both && i < STRONG_RANK) ? 'strong' : 'related',
+      why: both ? 'both' : 'similar',
+    }))
+
+  const taken = new Set([self, ...ranked])
+  const tangents = [...linked]
+    .filter(([id]) => !taken.has(id))
+    .sort((a, b) => notable(b[1]) - notable(a[1]) || a[0].localeCompare(b[0]))
+    .slice(0, TANGENTS)
+    .map(([id]): Neighbor => ({ id, strength: 'surprising', why: 'tangent' }))
+
+  return [...core, ...tangents]
 }

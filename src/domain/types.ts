@@ -10,4 +10,7 @@ export type Topic = {
   disambiguation: boolean
 }
 
-export type Neighbor = { id: string; strength: Strength }
+/** Why a topic is offered: similar text, linked both ways, or both (the best sign). A tangent is only linked. */
+export type Why = 'both' | 'similar' | 'tangent'
+
+export type Neighbor = { id: string; strength: Strength; why: Why }

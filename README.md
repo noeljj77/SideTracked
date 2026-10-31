@@ -10,7 +10,7 @@ Topics come from [Wikipedia](https://www.wikipedia.org) and [Wikidata](https://w
 
 ## What it does
 
-- **Explore as a graph.** The current topic glows amber at the centre. Related topics fan out around it, ranked strong, related or surprising. Click one to take a step.
+- **Explore as a graph.** The current topic glows amber at the centre. Related topics fan out around it, found by combining similar articles with ones that link both ways, plus a few surprising tangents. Click one to take a step.
 - **Peek before you step.** Hover a topic to see its thumbnail and first lines. Arrow keys move between topics and `Enter` steps into one. The ones you leave behind drift toward the one you chose.
 - **Collide two topics.** Pick any two, like Octopus and Byzantine Empire, and SideTracked finds a topic that links them (Octopus, Alexander of Tralles, Byzantine Empire). Choose another meeting point from the list, or walk the chain as a trail. The result has its own link, so you can share it.
 - **Keep your trail.** Every step is recorded along the bottom. Click an earlier step to rewind, or use the browser's back button. Trails are saved in your browser, and sync across devices if you sign in with Google.
