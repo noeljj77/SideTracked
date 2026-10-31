@@ -1,0 +1,68 @@
+# SideTracked
+
+**One thing leads to another.**
+
+SideTracked is an interactive way to explore the internet's knowledge. Start with any topic and follow related topics outward through a living map of ideas. The path you take is saved as a trail you can rewind, revisit and keep.
+
+Topics come from [Wikipedia](https://www.wikipedia.org) and [Wikidata](https://www.wikidata.org), shown in SideTracked's own dark, lamplit interface.
+
+## What it does
+
+- **Explore as a graph.** The current topic glows amber at the centre. Related topics fan out around it, ranked strong, related or surprising. Click one to take a step.
+- **Keep your trail.** Every step is recorded along the bottom. Click an earlier step to rewind, or use the browser's back button. Trails are saved in your browser.
+- **Jump anywhere.** Press `Ctrl K` (or `/`) to search any topic, pick "Surprise me" for a random article, or open your saved trails.
+- **See what kind of thing it is.** Small icons mark each topic as a person, place, event, idea or thing.
+- **Read without leaving.** A side panel shows the summary and links to the full Wikipedia article.
+- **Works on phones.** The panel becomes a bottom sheet and the graph reflows to a portrait layout.
+
+## Getting started
+
+You need [Node.js](https://nodejs.org) 22 or newer.
+
+```bash
+npm install
+npm run dev
+```
+
+Then open the address Vite prints (usually http://localhost:5173).
+
+## Scripts
+
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Start the dev server |
+| `npm run build` | Typecheck and build for production into `dist/` |
+| `npm run lint` | Lint with ESLint |
+| `npm run typecheck` | Typecheck the app and the e2e tests |
+| `npm test` | Run unit and component tests (Vitest) |
+| `npm run test:e2e` | Run end-to-end tests (Playwright, uses Chrome) |
+
+The e2e tests use a fake Wikipedia, so no tests touch the live site. On a machine without Chrome, run `npx playwright install chrome` first.
+
+## Built with
+
+Vite, React 18 and strict TypeScript. React Router for pages, TanStack Query for data, Zustand for saved trails, d3-force and SVG for the graph, and zod to validate every API response. Styling is plain CSS Modules on a small set of design tokens. Tests use Vitest, Testing Library and Playwright.
+
+## Project layout
+
+```
+src/
+  app/          app shell, router, providers
+  routes/       Landing and Explore pages
+  features/     graph, reader, trail, search
+  api/          Wikipedia and Wikidata clients
+  domain/       pure types and logic (ranking, kinds)
+  stores/       Zustand stores
+  components/   shared UI pieces
+  hooks/        shared hooks
+  styles/       design tokens and global styles
+e2e/            Playwright tests
+```
+
+## Data and credit
+
+Article text comes from Wikipedia and is available under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). SideTracked links every summary back to its source article. Topic types come from Wikidata, whose data is available under [CC0](https://creativecommons.org/publicdomain/zero/1.0/).
+
+## For contributors
+
+[CLAUDE.md](CLAUDE.md) documents the design direction, conventions, architecture and git workflow in detail, and is the best place to start before making changes.
