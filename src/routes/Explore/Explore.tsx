@@ -26,16 +26,13 @@ export function Explore() {
   const topic = useTopic(id)
   const related = useRelated(id)
   // Look up kinds once the neighbours are known, in one batch: this topic, the recent trail, and the neighbours.
-  const kinds = useKinds(
-    related.data ? [id, ...steps.slice(-5), ...related.data.map((n) => n.id)] : [],
-  ).data ?? NO_KINDS
+  const kinds =
+    useKinds(related.data ? [id, ...steps.slice(-5), ...related.data.map((n) => n.id)] : []).data ??
+    NO_KINDS
 
   useEffect(() => visit(id), [id, visit])
 
-  const go = useCallback(
-    (to: string) => navigate(`/explore/${encodeURIComponent(to)}`),
-    [navigate],
-  )
+  const go = useCallback((to: string) => navigate(`/explore/${encodeURIComponent(to)}`), [navigate])
 
   return (
     <main className={styles.page} data-idle={idle}>
@@ -54,6 +51,7 @@ export function Explore() {
           Search <kbd>Ctrl K</kbd>
         </Pill>
         <Pill onClick={() => open('trails')}>Trails</Pill>
+        <Pill onClick={() => open('map')}>Map</Pill>
         <Pill onClick={() => navigate(`/collide?from=${encodeURIComponent(id)}`)}>Collide</Pill>
         <AccountPill />
       </div>

@@ -116,3 +116,28 @@ test('dragging a neighbour does not step into it', async ({ page }) => {
   await squid.click()
   await expect(page).toHaveURL(/\/explore\/Squid$/)
 })
+
+test('the trail map shows every step and a star takes you back to it', async ({ page }) => {
+  await page.goto('/explore/Octopus')
+  await page.getByRole('link', { name: 'Go to Squid' }).click()
+  await expect(page).toHaveURL(/\/explore\/Squid$/)
+
+  await page.getByRole('button', { name: 'Map' }).click()
+  const map = page.getByRole('dialog', { name: 'Trail map' })
+  await expect(map).toContainText('2 TOPICS')
+  await expect(map.getByRole('link', { name: 'Squid, where you are' })).toBeVisible()
+
+  await map.getByRole('link', { name: 'Go back to Octopus' }).click()
+  await expect(map).toBeHidden()
+  await expect(page).toHaveURL(/\/explore\/Octopus$/)
+  await expect(thread(page)).toContainText('Octopus')
+})
+
+test('M opens the trail map and Escape closes it', async ({ page }) => {
+  await page.goto('/explore/Octopus')
+  await expect(page.getByRole('link', { name: 'Go to Squid' })).toBeVisible()
+  await page.keyboard.press('m')
+  await expect(page.getByRole('dialog', { name: 'Trail map' })).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(page.getByRole('dialog', { name: 'Trail map' })).toBeHidden()
+})

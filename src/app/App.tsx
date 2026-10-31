@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { ApiError } from '@/api/wikipedia/errors'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
@@ -12,6 +12,11 @@ import { Collide } from '@/routes/Collide/Collide'
 import { Explore } from '@/routes/Explore/Explore'
 import { Landing } from '@/routes/Landing/Landing'
 import { useUi } from '@/stores/uiStore'
+
+// The map pulls in the layout engine, so it loads only when opened.
+const TrailMap = lazy(() =>
+  import('@/features/graph/TrailMap').then((m) => ({ default: m.TrailMap })),
+)
 
 function makeClient() {
   return new QueryClient({
@@ -38,6 +43,11 @@ function Shell() {
       {overlay === 'command' && <CommandBar />}
       {overlay === 'trails' && <TrailsOverlay />}
       {overlay === 'account' && <AccountOverlay />}
+      {overlay === 'map' && (
+        <Suspense fallback={null}>
+          <TrailMap />
+        </Suspense>
+      )}
     </>
   )
 }

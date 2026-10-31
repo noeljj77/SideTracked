@@ -7,7 +7,7 @@ export function isTyping(t: EventTarget | null) {
   return !!el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName))
 }
 
-/** Ctrl/Cmd+K toggles the command bar; "/" opens it when you are not typing. */
+/** Ctrl/Cmd+K toggles the command bar; "/" opens it and "m" opens the trail map when you are not typing. */
 export function useShortcuts() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -21,7 +21,10 @@ export function useShortcuts() {
       if (e.key === '/' && !isTyping(e.target) && !overlay) {
         e.preventDefault()
         open('command')
+        return
       }
+      if (e.key === 'm' && !e.ctrlKey && !e.metaKey && !e.altKey && !isTyping(e.target) && !overlay)
+        open('map')
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-type OverlayName = 'command' | 'trails' | 'account'
+type OverlayName = 'command' | 'trails' | 'account' | 'map'
 
 type UiState = {
   overlay: OverlayName | null

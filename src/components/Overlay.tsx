@@ -5,7 +5,15 @@ import styles from './Overlay.module.css'
 const FOCUSABLE = 'a[href],button,input,[tabindex]:not([tabindex="-1"])'
 
 /** Modal layer: Esc or backdrop click closes, Tab stays inside, focus returns afterwards. */
-export function Overlay({ label, children }: { label: string; children: ReactNode }) {
+export function Overlay({
+  label,
+  wide,
+  children,
+}: {
+  label: string
+  wide?: boolean
+  children: ReactNode
+}) {
   const close = useUi((s) => s.close)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -37,12 +45,19 @@ export function Overlay({ label, children }: { label: string; children: ReactNod
 
   return (
     <div
-      className={styles.backdrop}
+      className={`${styles.backdrop} ${wide ? styles.backdropWide : ''}`}
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) close()
       }}
     >
-      <div ref={ref} className={styles.panel} role="dialog" aria-modal="true" aria-label={label} tabIndex={-1}>
+      <div
+        ref={ref}
+        className={`${styles.panel} ${wide ? styles.panelWide : ''}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label={label}
+        tabIndex={-1}
+      >
         {children}
       </div>
     </div>

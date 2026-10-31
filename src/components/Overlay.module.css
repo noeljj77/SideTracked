@@ -29,3 +29,13 @@
     opacity: 0;
   }
 }
+
+/* The trail map takes nearly the whole screen. */
+.backdropWide {
+  padding: 4vh 3vw;
+  align-items: stretch;
+}
+.panelWide {
+  width: 100%;
+  max-height: none;
+}
