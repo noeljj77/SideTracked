@@ -43,6 +43,11 @@
     transform: translate(14px, -10px);
   }
 }
+@media (prefers-reduced-motion: reduce) {
+  .words span {
+    animation: none;
+  }
+}
 
 .brand {
   margin: 0;

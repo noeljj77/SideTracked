@@ -92,6 +92,11 @@
   transform-origin: center;
   animation: pulse 3.2s var(--ease) infinite;
 }
+@media (prefers-reduced-motion: reduce) {
+  .pulse {
+    animation: none;
+  }
+}
 
 .node {
   color: var(--paper-3);
