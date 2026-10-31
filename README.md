@@ -6,7 +6,7 @@
 
 **Live demo: https://side-tracked.vercel.app**
 
-![The SideTracked landing page: a headline, a search box, and five topic notes pinned along a red thread](docs/landing-light.jpg)
+![A short recording: dealing new starting topics, searching for Octopus, stepping through four topics as the red thread draws behind, then the map of the whole trail](docs/sidetracked-demo.gif)
 
 SideTracked is an interactive way to explore the internet's knowledge. Start with any topic and follow related topics outward through a living map of ideas. The path you take is saved as a trail you can rewind, revisit and keep.
 
@@ -14,7 +14,11 @@ Topics come from [Wikipedia](https://www.wikipedia.org) and [Wikidata](https://w
 
 ## What it looks like
 
-| Exploring a topic | The night board |
+| The landing page | The night board |
+| --- | --- |
+| ![The landing page: a headline, a search box, and five topic notes pinned along a red thread](docs/landing-light.jpg) | ![The landing page in dark mode](docs/landing-dark.jpg) |
+
+| Exploring a topic | The same, at night |
 | --- | --- |
 | ![A trail of five topics drawn as a red thread, with the reading panel open](docs/explore-light.jpg) | ![The same view in dark mode](docs/explore-dark.jpg) |
 
