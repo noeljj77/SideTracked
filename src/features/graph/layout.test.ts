@@ -1,4 +1,4 @@
-import { layoutGraph, VIEW } from './layout'
+import { layoutGraph, VIEW, VIEWS } from './layout'
 
 it('pins the current node, keeps every node in bounds, and shows visited steps once', () => {
   const { nodes, edges } = layoutGraph(
@@ -15,4 +15,11 @@ it('pins the current node, keeps every node in bounds, and shows visited steps o
   expect(nodes.find((n) => n.id === 'A')?.state).toBe('visited')
   expect(nodes.every((n) => Number.isFinite(n.x) && n.x >= 50 && n.x <= VIEW.w)).toBe(true)
   expect(edges.filter((e) => e.kind === 'trail')).toHaveLength(2)
+})
+
+it('compact view caps neighbours and keeps labels clear of the bottom sheet', () => {
+  const many = Array.from({ length: 9 }, (_, i) => ({ id: `N${i}`, strength: 'strong' as const }))
+  const { nodes } = layoutGraph('C', ['C'], many, VIEWS.compact)
+  expect(nodes.filter((n) => n.state === 'discoverable')).toHaveLength(5)
+  expect(nodes.every((n) => n.x <= VIEWS.compact.maxX)).toBe(true)
 })

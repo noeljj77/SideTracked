@@ -4,6 +4,7 @@ import { useRelated, useTopic } from '@/api/wikipedia/queries'
 import { GraphCanvas } from '@/features/graph/GraphCanvas'
 import { ReadingPanel } from '@/features/reader/ReadingPanel'
 import { TrailThread } from '@/features/trail/TrailThread'
+import { useIdle } from '@/hooks/useIdle'
 import { useTrail } from '@/stores/trailStore'
 import styles from './Explore.module.css'
 
@@ -15,6 +16,7 @@ export function Explore() {
   const steps = useTrail((s) => s.steps)
   const visit = useTrail((s) => s.visit)
   const rewind = useTrail((s) => s.rewind)
+  const idle = useIdle(4000)
   const topic = useTopic(id)
   const related = useRelated(id)
 
@@ -26,7 +28,7 @@ export function Explore() {
   )
 
   return (
-    <main className={styles.page}>
+    <main className={styles.page} data-idle={idle}>
       <GraphCanvas
         current={id}
         trail={steps}

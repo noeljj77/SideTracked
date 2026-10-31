@@ -19,3 +19,11 @@
 .brand:hover {
   color: var(--paper);
 }
+
+/* Everything except the graph is chrome: it dims when idle and returns on hover or focus. */
+.page > :not(svg) {
+  transition: opacity 0.6s var(--ease);
+}
+.page[data-idle='true'] > :not(svg):not(:hover):not(:focus-within) {
+  opacity: 0.25;
+}

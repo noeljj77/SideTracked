@@ -13,7 +13,14 @@ export type NodeState = 'current' | 'visited' | 'discoverable'
 export type GraphNode = { id: string; state: NodeState; r: number; x: number; y: number }
 export type GraphEdge = { source: string; target: string; kind: 'trail' | 'path' }
 
-export const VIEW = { w: 1000, h: 600, cx: 300, cy: 300 }
+/** Canvas geometry. `maxX` keeps right-hand labels clear of the reading panel / bottom sheet. */
+export type View = { w: number; h: number; cx: number; cy: number; ring: number; maxX: number; maxNeighbors: number }
+export const VIEWS = {
+  wide: { w: 1000, h: 600, cx: 300, cy: 300, ring: 170, maxX: 480, maxNeighbors: 9 },
+  // Portrait: graph sits in the top half, above the bottom sheet.
+  compact: { w: 400, h: 600, cx: 110, cy: 220, ring: 100, maxX: 210, maxNeighbors: 5 },
+} satisfies Record<string, View>
+export const VIEW = VIEWS.wide
 const MAX_VISITED = 4
 const RADIUS: Record<Strength, number> = { strong: 9, related: 7, surprising: 5 }
 
@@ -23,9 +30,11 @@ type SimNode = SimulationNodeDatum & GraphNode
 export function layoutGraph(
   current: string,
   trail: string[],
-  neighbors: Neighbor[],
+  allNeighbors: Neighbor[],
+  view: View = VIEWS.wide,
 ): { nodes: GraphNode[]; edges: GraphEdge[] } {
-  const { w, h, cx, cy } = VIEW
+  const { h, cx, cy, ring, maxX, maxNeighbors } = view
+  const neighbors = allNeighbors.slice(0, maxNeighbors)
   const chain = trail.at(-1) === current ? trail : [...trail, current]
   const recent = chain.slice(-(MAX_VISITED + 1))
 
@@ -50,8 +59,8 @@ export function layoutGraph(
       id: n.id,
       state: 'discoverable',
       r: RADIUS[n.strength],
-      x: cx + Math.cos(angle) * 170,
-      y: cy + Math.sin(angle) * 170,
+      x: cx + Math.cos(angle) * ring,
+      y: cy + Math.sin(angle) * ring,
     })
   })
 
@@ -74,7 +83,7 @@ export function layoutGraph(
     )
     .force('charge', forceManyBody().strength(-320))
     .force('collide', forceCollide<SimNode>((d) => d.r + 40))
-    .force('x', forceX<SimNode>((d) => (d.state === 'visited' ? cx - 250 : cx + 150)).strength(0.04))
+    .force('x', forceX<SimNode>((d) => (d.state === 'visited' ? cx - ring * 1.5 : cx + ring * 0.9)).strength(0.04))
     .force('y', forceY(cy).strength(0.03))
     .stop()
   for (let i = 0; i < 300; i++) sim.tick()
@@ -85,7 +94,7 @@ export function layoutGraph(
       id: d.id,
       state: d.state,
       r: d.r,
-      x: clamp(d.x ?? cx, 50, w - 520),
+      x: clamp(d.x ?? cx, 50, maxX),
       y: clamp(d.y ?? cy, 50, h - 90),
     })),
     edges,

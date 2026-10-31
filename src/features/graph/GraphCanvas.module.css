@@ -24,7 +24,9 @@
   stroke-opacity: 0.45;
   stroke-width: 1.1;
   stroke-linecap: round;
-  transition: opacity 0.35s var(--ease);
+  transition:
+    opacity 0.35s var(--ease),
+    d 0.8s var(--ease);
   animation: fade 0.8s var(--ease) both;
 }
 .trail {
@@ -33,16 +35,21 @@
   stroke-width: 2.4;
 }
 
-.node {
+.place {
   cursor: pointer;
   outline: none;
-  transition: opacity 0.35s var(--ease);
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: bloom 0.6s var(--ease) both;
+  transition:
+    transform 0.8s var(--ease),
+    opacity 0.35s var(--ease);
 }
-.node.current {
+.place.current {
   cursor: default;
+}
+/* Blooms in from the node's own centre (origin 0,0 of the translated parent). */
+.node {
+  transform-box: view-box;
+  transform-origin: 0 0;
+  animation: bloom 0.6s var(--ease) both;
 }
 .dim {
   opacity: 0.25;
@@ -74,7 +81,7 @@
 .discoverable:focus-visible .body {
   fill: var(--tide);
 }
-.node:focus-visible .hit {
+.place:focus-visible .hit {
   stroke: var(--lantern);
   stroke-width: 2;
 }

@@ -1,6 +1,7 @@
-import { memo, useMemo, useState } from 'react'
+import { memo, useMemo, useState, type CSSProperties } from 'react'
 import type { Neighbor } from '@/domain/types'
-import { layoutGraph, VIEW, type GraphNode } from './layout'
+import { useCompact } from '@/hooks/useCompact'
+import { layoutGraph, VIEWS, type GraphNode } from './layout'
 import styles from './GraphCanvas.module.css'
 
 type Props = {
@@ -18,32 +19,34 @@ function curve(a: Pt, b: Pt) {
   return `M${a.x},${a.y} Q${mx - (b.y - a.y) * 0.15},${my + (b.x - a.x) * 0.15} ${b.x},${b.y}`
 }
 
+/** Positions are relative to the node's own origin; the wrapper group does the moving. */
 function Label({ n }: { n: GraphNode }) {
   if (n.state === 'current') {
     return (
-      <text className={styles.labelCurrent} x={n.x} y={n.y + n.r + 30} textAnchor="middle">
+      <text className={styles.labelCurrent} y={n.r + 30} textAnchor="middle">
         {n.id}
       </text>
     )
   }
   if (n.state === 'visited') {
     return (
-      <text className={styles.label} x={n.x} y={n.y + n.r + 26} textAnchor="middle">
+      <text className={styles.label} y={-(n.r + 14)} textAnchor="middle">
         {n.id}
       </text>
     )
   }
   return (
-    <text className={styles.label} x={n.x + n.r + 12} y={n.y + 5}>
+    <text className={styles.label} x={n.r + 12} y={5}>
       {n.id}
     </text>
   )
 }
 
 export const GraphCanvas = memo(function GraphCanvas({ current, trail, neighbors, onSelect }: Props) {
+  const view = useCompact() ? VIEWS.compact : VIEWS.wide
   const { nodes, edges } = useMemo(
-    () => layoutGraph(current, trail, neighbors),
-    [current, trail, neighbors],
+    () => layoutGraph(current, trail, neighbors, view),
+    [current, trail, neighbors, view],
   )
   const [hover, setHover] = useState<string | null>(null)
   const byId = useMemo(() => new Map(nodes.map((n) => [n.id, n])), [nodes])
@@ -63,7 +66,8 @@ export const GraphCanvas = memo(function GraphCanvas({ current, trail, neighbors
   return (
     <svg
       className={styles.svg}
-      viewBox={`0 0 ${VIEW.w} ${VIEW.h}`}
+      viewBox={`0 0 ${view.w} ${view.h}`}
+      preserveAspectRatio="xMidYMin meet"
       role="group"
       aria-label={`Topics connected to ${current}`}
     >
@@ -87,6 +91,8 @@ export const GraphCanvas = memo(function GraphCanvas({ current, trail, neighbors
           <path
             key={`${e.kind}:${e.source}>${e.target}`}
             d={curve(a, b)}
+            // CSS `d` lets Chrome animate the curve; other browsers snap via the attribute above.
+            style={{ d: `path("${curve(a, b)}")` } as CSSProperties}
             className={`${styles.edge} ${e.kind === 'trail' ? styles.trail : ''} ${active ? '' : styles.dim}`}
           />
         )
@@ -97,7 +103,8 @@ export const GraphCanvas = memo(function GraphCanvas({ current, trail, neighbors
         return (
           <g
             key={n.id}
-            className={`${styles.node} ${styles[n.state]} ${dim(n.id)}`}
+            style={{ transform: `translate(${n.x}px, ${n.y}px)` }}
+            className={`${styles.place} ${styles[n.state]} ${dim(n.id)}`}
             role={isCurrent ? undefined : 'link'}
             tabIndex={isCurrent ? undefined : 0}
             aria-label={isCurrent ? undefined : `Go to ${n.id}`}
@@ -110,19 +117,19 @@ export const GraphCanvas = memo(function GraphCanvas({ current, trail, neighbors
             onFocus={() => setHover(n.id)}
             onBlur={() => setHover(null)}
           >
-            <circle cx={n.x} cy={n.y} r={22} className={styles.hit} />
-            {isCurrent && (
-              <>
-                <circle cx={n.x} cy={n.y} r={n.r * 3.2} fill="url(#glow-lantern)" />
-                <circle cx={n.x} cy={n.y} r={n.r * 1.7} className={styles.pulse} />
-              </>
-            )}
-            {n.state === 'discoverable' && (
-              <circle cx={n.x} cy={n.y} r={n.r * 2.6} fill="url(#glow-tide)" />
-            )}
-            {n.state === 'visited' && <circle cx={n.x} cy={n.y} r={n.r + 3.5} className={styles.ring} />}
-            <circle cx={n.x} cy={n.y} r={n.r} className={styles.body} />
-            <Label n={n} />
+            <circle r={22} className={styles.hit} />
+            <g className={styles.node}>
+              {isCurrent && (
+                <>
+                  <circle r={n.r * 3.2} fill="url(#glow-lantern)" />
+                  <circle r={n.r * 1.7} className={styles.pulse} />
+                </>
+              )}
+              {n.state === 'discoverable' && <circle r={n.r * 2.6} fill="url(#glow-tide)" />}
+              {n.state === 'visited' && <circle r={n.r + 3.5} className={styles.ring} />}
+              <circle r={n.r} className={styles.body} />
+              <Label n={n} />
+            </g>
           </g>
         )
       })}
