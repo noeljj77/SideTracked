@@ -10,7 +10,7 @@ Concept: *the red thread.* Topics are notes and pins on a cool tracing-paper boa
 
 - **Must not** look like a Wikipedia clone, a generic dashboard, or a template. Minimal chrome, strong hierarchy. Avoid the generated-page tells: tracked all-caps eyebrows, monospace data labels, "WORD — fragment" labels, one accented word in a headline, identical cards, "→" on buttons.
 - **Colour means state, never category.** Categories (person, place, idea, event, thing) are small glyphs.
-- **Light only** for now. All colours come from tokens in `src/styles/tokens.css`. No hard-coded hex in components (shadows may use the ink as rgba).
+- **Light and dark** ("night board"): the dark values are `:root[data-theme="dark"]` in `src/styles/tokens.css`, set before first paint by a script in `index.html` (saved choice, else the system setting) and switched by `components/ThemeToggle.tsx` via `stores/themeStore.ts`. All colours come from tokens; text on red uses `--on-thread`, shadows use `rgba(var(--shade), a)`. No hard-coded hex in components (shadows may use the ink as rgba).
 
 | Token | Value | Use |
 |---|---|---|
@@ -112,7 +112,7 @@ e2e/              Playwright specs
 - Config comes from `VITE_FIREBASE_*` in `.env.local` (gitignored; template in `.env.example`) and in Vercel's project settings. These identify the project and are not secrets; **security comes from `firestore.rules`**. Never commit service-account keys or admin credentials.
 - Only `src/api/firebase/firebase.ts` imports the Firebase SDK. Everything else goes through `features/account/account.ts` and the `TrailsRepo` type in `domain/trails.ts`, so tests use a fake repo and never touch Firebase.
 - `features/account/sync.ts` merges this device's trails into the account on first sign-in, then treats the account as the truth. It pushes local saves and deletes, and uses a `known` map to avoid echo writes. Keep its unit tests passing when changing it.
-- Signing out keeps trails on the device. Validate every Firestore document with zod before use.
+- Signing out keeps trails on the device, and `savedTrailsStore.owner` records which account they were synced with: signing in as a different account replaces them with that account's own copy instead of uploading them. Validate every Firestore document with zod before use.
 - Changing `firestore.rules` is a deployment step: it is pasted into Firebase console (Firestore → Rules) or deployed with the Firebase CLI; pushing to git does not update it.
 - `npm audit` flags `@grpc/grpc-js` via `firebase`. That is the Node server transport, not used by the browser SDK. Do not run `npm audit fix --force` (it downgrades Firebase to 2022).
 

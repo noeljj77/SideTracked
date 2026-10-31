@@ -13,6 +13,9 @@
   --glass: rgba(245, 247, 250, 0.86);
   --line: rgba(20, 33, 61, 0.1);
   --line-2: rgba(20, 33, 61, 0.2);
+  /* Text on a thread-red surface, and the rgb of drop shadows. */
+  --on-thread: #f5f7fa;
+  --shade: 20, 33, 61;
 
   --font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
   --font-body: 'Bricolage Grotesque', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -24,4 +27,22 @@
 
   --ease: cubic-bezier(0.22, 0.8, 0.24, 1);
   color-scheme: light;
+}
+
+/* The night board: the same paper, lit from behind. Set by index.html before first paint and by the theme toggle. */
+:root[data-theme='dark'] {
+  --ground: #0f1624;
+  --card: #182133;
+  --raise: #222d44;
+  --ink: #e8ecf4;
+  --ink-2: #b4bfd3;
+  --ink-3: #8f9cb5;
+  --thread: #ff6b5e;
+  --haze: #8fa9f0;
+  --glass: rgba(24, 33, 51, 0.86);
+  --line: rgba(232, 236, 244, 0.1);
+  --line-2: rgba(232, 236, 244, 0.2);
+  --on-thread: #1a0f12;
+  --shade: 0, 0, 0;
+  color-scheme: dark;
 }

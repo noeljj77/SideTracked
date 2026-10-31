@@ -4,6 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#E6EBF0" />
+    <script>
+      // Pick the theme before first paint, so a dark-mode visitor never sees a flash of paper.
+      try {
+        var saved = localStorage.getItem('sidetracked-theme')
+        var dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches
+        if (dark) document.documentElement.dataset.theme = 'dark'
+      } catch (e) {}
+    </script>
     <title>SideTracked</title>
     <meta
       name="description"

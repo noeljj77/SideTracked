@@ -2,6 +2,7 @@ import { useState, type CSSProperties, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { fetchRandomTitle } from '@/api/wikipedia/client'
 import { Pill } from '@/components/Pill'
+import { ThemeToggle } from '@/components/ThemeToggle'
 import { AccountPill } from '@/features/account/AccountPill'
 import { smooth } from '@/features/collide/bridgeLayout'
 import { startFresh } from '@/features/trail/actions'
@@ -75,6 +76,7 @@ export function Landing() {
           SideTracked
         </p>
         <nav className={styles.nav}>
+          <ThemeToggle />
           <AccountPill />
           <Pill onClick={() => navigate('/collide')}>Collide</Pill>
           <Pill onClick={() => open('trails')}>Your trails</Pill>

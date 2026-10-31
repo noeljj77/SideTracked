@@ -77,7 +77,7 @@
   border: 2px solid var(--thread);
   border-radius: 12px;
   background: var(--thread);
-  color: var(--card);
+  color: var(--on-thread);
   font: inherit;
   font-size: 17px;
   font-weight: 650;

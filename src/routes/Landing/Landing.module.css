@@ -128,7 +128,7 @@
   border: 2px solid var(--thread);
   border-radius: 12px;
   background: var(--thread);
-  color: var(--card);
+  color: var(--on-thread);
   font: inherit;
   font-size: 17px;
   font-weight: 650;
@@ -248,7 +248,7 @@
   background: var(--card);
   box-shadow:
     0 1px 0 var(--line),
-    0 14px 24px -14px rgba(20, 33, 61, 0.4);
+    0 14px 24px -14px rgba(var(--shade), 0.4);
   color: var(--ink);
   text-decoration: none;
   transform: rotate(var(--tilt));
@@ -276,7 +276,7 @@
   transform: rotate(0deg) translateY(-8px);
   box-shadow:
     0 1px 0 var(--line),
-    0 26px 30px -16px rgba(20, 33, 61, 0.45);
+    0 26px 30px -16px rgba(var(--shade), 0.45);
   z-index: 2;
 }
 .noteCard:focus-visible {
@@ -294,8 +294,8 @@
   border-radius: 50%;
   background: var(--thread);
   box-shadow:
-    inset -2px -2px 0 rgba(20, 33, 61, 0.28),
-    0 2px 3px rgba(20, 33, 61, 0.3);
+    inset -2px -2px 0 rgba(var(--shade), 0.28),
+    0 2px 3px rgba(var(--shade), 0.3);
   transition: transform 0.3s var(--ease);
   animation: pop 0.5s var(--ease) calc(0.9s + var(--i) * 0.22s) backwards;
 }

@@ -7,6 +7,7 @@ import { GraphCanvas } from '@/features/graph/GraphCanvas'
 import { ReadingPanel } from '@/features/reader/ReadingPanel'
 import { TrailThread } from '@/features/trail/TrailThread'
 import { Pill } from '@/components/Pill'
+import { ThemeToggle } from '@/components/ThemeToggle'
 import { useIdle } from '@/hooks/useIdle'
 import { useTrail } from '@/stores/trailStore'
 import { useUi } from '@/stores/uiStore'
@@ -53,6 +54,7 @@ export function Explore() {
         <Pill onClick={() => open('trails')}>Trails</Pill>
         <Pill onClick={() => open('map')}>Map</Pill>
         <Pill onClick={() => navigate(`/collide?from=${encodeURIComponent(id)}`)}>Collide</Pill>
+        <ThemeToggle />
         <AccountPill />
       </div>
       <ReadingPanel id={id} topic={topic} related={related} kinds={kinds} onSelect={go} />

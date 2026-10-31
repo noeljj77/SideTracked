@@ -20,7 +20,7 @@
   background: var(--card);
   border: 1px solid var(--line-2);
   border-radius: 16px;
-  box-shadow: 0 24px 70px rgba(20, 33, 61, 0.3);
+  box-shadow: 0 24px 70px rgba(var(--shade), 0.3);
   outline: none;
 }
 .panel:focus-visible {
