@@ -66,3 +66,24 @@ test('the landing page offers to pick up the last trail', async ({ page }) => {
   await expect(page).toHaveURL(/\/explore\/Squid$/)
   await expect(page.getByRole('navigation', { name: 'Your trail' })).toContainText('Octopus')
 })
+
+test('the landing page credits its sources and links to the code', async ({ page }) => {
+  await page.goto('/')
+  const foot = page.locator('footer')
+  await expect(foot.getByRole('link', { name: 'Wikipedia' })).toHaveAttribute(
+    'href',
+    /wikipedia\.org/,
+  )
+  await expect(foot.getByRole('link', { name: 'Source on GitHub' })).toHaveAttribute(
+    'href',
+    'https://github.com/noeljj77/SideTracked',
+  )
+})
+
+test('an unknown address says so and leads back to the start', async ({ page }) => {
+  await page.goto('/nowhere/at/all')
+  await expect(page.getByRole('heading', { name: /isn.t on the board/ })).toBeVisible()
+  await page.getByRole('link', { name: 'Back to the start' }).click()
+  await expect(page).toHaveURL(/\/$/)
+  await expect(page.locator('main a[data-seed]')).toHaveCount(5)
+})

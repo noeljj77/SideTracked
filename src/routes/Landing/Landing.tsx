@@ -174,6 +174,23 @@ export function Landing() {
           })}
         </div>
       </section>
+
+      <footer className={styles.foot}>
+        <p>
+          Topics and summaries come from{' '}
+          <a href="https://www.wikipedia.org" target="_blank" rel="noreferrer">
+            Wikipedia
+          </a>{' '}
+          (CC BY-SA) and{' '}
+          <a href="https://www.wikidata.org" target="_blank" rel="noreferrer">
+            Wikidata
+          </a>
+          .
+        </p>
+        <a href="https://github.com/noeljj77/SideTracked" target="_blank" rel="noreferrer">
+          Source on GitHub
+        </a>
+      </footer>
     </main>
   )
 }

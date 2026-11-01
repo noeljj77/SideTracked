@@ -418,3 +418,28 @@
 .resume:focus-visible .pin {
   transform: scale(1.3);
 }
+
+/* ---------- Credits ---------- */
+
+.foot {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 24px;
+  font-family: var(--font-text);
+  font-size: 15px;
+  color: var(--ink-3);
+}
+.foot p {
+  margin: 0;
+}
+.foot a {
+  color: var(--ink-2);
+  text-underline-offset: 3px;
+}
+.foot a:hover {
+  color: var(--ink);
+}
