@@ -9,6 +9,7 @@ import { CommandBar } from '@/features/search/CommandBar'
 import { TrailsOverlay } from '@/features/trail/TrailsOverlay'
 import { useShortcuts } from '@/hooks/useShortcuts'
 import { Landing } from '@/routes/Landing/Landing'
+import { NotFound } from '@/routes/NotFound/NotFound'
 import { useUi } from '@/stores/uiStore'
 
 // The two big pages load when first visited, so the landing page ships without the graph code.
@@ -41,6 +42,7 @@ function Shell() {
           <Route path="/" element={<Landing />} />
           <Route path="/explore/:topic" element={<Explore />} />
           <Route path="/collide" element={<Collide />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
       {overlay === 'command' && <CommandBar />}
